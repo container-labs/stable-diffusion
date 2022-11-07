@@ -1,8 +1,13 @@
 import base64
 
 from diffusers import StableDiffusionPipeline
+from PIL import Image
+# ln -s ../../ldm/invoke/restoration/gfpgan ./
+# from gfpgan import gfpgan
+from restoration import Restoration
 from torch import Generator
 
+# ln -s ../Common ./
 
 def dummy(images, **kwargs):
     return images, False
@@ -19,7 +24,12 @@ class Runner:
     self.seed_start = opts["seed_start"] if "seed_start" in opts else None
     self.seed_end = opts["seed_end"] if "seed_end" in opts else None
     self.guidance_scale = opts["guidance_scale"] if "guidance_scale" in opts else 7.5
-    self.facetool_strength = opts["facetool_strength"] if "facetool_strength" in opts else 0.0
+    self.source_guidance_scale = opts["source_guidance_scale"] if "source_guidance_scale" in opts else 1.0
+    self.source_image = opts["source_image"] if "source_image" in opts else None
+    self.facetool_strength = opts["facetool_strength"] if "facetool_strength" in opts else 0.8
+    self.codeformer_fidelity = opts["codeformer_fidelity"] if "codeformer_fidelity" in opts else 0.8
+    self.facetool = opts["facetool"] if "facetool" in opts else "gfpgan"
+
 
   def setup_pipeline(self):
     pipe = StableDiffusionPipeline.from_pretrained(
@@ -31,6 +41,11 @@ class Runner:
     self.pipe = pipe
 
   def run(self):
+    faces = Restoration()
+    face_restore_models = faces.load_face_restore_models()
+    gfpgan_instance = face_restore_models[0]
+    codeformer_instance = face_restore_models[1]
+
     for n in range(self.number_of_images):
       seed = n
       if self.seed_start is not None:
@@ -46,8 +61,19 @@ class Runner:
         self.prompt,
         num_inference_steps=self.steps,
         guidance_scale=self.guidance_scale,
-        facetool_strength=self.facetool_strength,
+        source_guidance_scale=self.source_guidance_scale,
+        init_image=self.source_image,
         generator=generator)
       image = result.images[0]
-      image.save(f"styles-{self.model_style}-{seed}-{uid}.png")
+      image_path = f"styles-{self.model_style}-{uid}-{seed}.png"
+      image.save(image_path)
+      image_file = Image.open(image_path)
+      if self.facetool == "gfpgan":
+        image = gfpgan_instance.process(image_file, self.facetool_strength, seed)
+        image.save(image_path)
+      if self.facetool == "codeformer":
+        image = codeformer_instance.process(image_file, self.facetool_strength, "mps", seed, self.codeformer_fidelity)
+        image.save(image_path)
+
+
 
