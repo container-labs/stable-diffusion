@@ -1,7 +1,20 @@
 version: "3"
 
+volumes:
+  pip_cache:
+  model_cache:
+
 services:
   app:
     build:
       context: ./docker
       dockerfile: Dockerfile
+    environment:
+      - HUGGINGFACE_TOKEN=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
+    # https://stackoverflow.com/questions/43844639/how-do-i-add-cached-or-delegated-into-a-docker-compose-yml-volumes-list
+    volumes:
+      - pip_cache:/root/.cache/pip:delegated
+      # TODO: make this one sync w/ localhost
+      - model_cache:/root/.cache/huggingface:delegated
+      - ./image_dir:/image_dir:default
+
