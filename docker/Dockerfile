@@ -9,7 +9,7 @@ COPY environment-linux.yml /environment.yml
 RUN conda init bash && . /root/.bashrc && conda update conda
 # SHELL ["/bin/sh", "--login", "-c"]
 RUN . /root/.bashrc && conda env create -f environment.yml
-
+RUN jupyter kernelspec list --json
 # Make RUN commands use the new environment:
 # RUN echo "conda activate stable-app" >> ~/.bashrc
 # SHELL ["/bin/sh", "--login", "-c"]
