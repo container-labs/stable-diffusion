@@ -2,8 +2,8 @@
 FROM gcr.io/deeplearning-platform-release/pytorch-xla:latest
 # https://pytorch.org/xla/release/1.13/index.html
 
-COPY requirements-linux.txt setup.py .
-RUN mv requirements-linux.txt requirements.txt
+COPY requirements-linux.txt /requirements.txt
+COPY setup.py /setup.py
 COPY environment-linux.yml /environment.yml
 
 RUN conda init bash && . /root/.bashrc && conda update conda
