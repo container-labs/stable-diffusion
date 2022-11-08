@@ -1,4 +1,4 @@
-name: invokeai
+name: stable-app
 channels:
   - pytorch
   - conda-forge
