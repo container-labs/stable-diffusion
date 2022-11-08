@@ -4,4 +4,4 @@ steps:
   - --destination=us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/cuda/stable
   - --cache=true
   - --cache-ttl=6h
-  - --conext=docker
+  - --context=docker
