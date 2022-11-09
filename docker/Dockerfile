@@ -7,8 +7,20 @@ COPY requirements-linux.txt /requirements.txt
 COPY setup.py /setup.py
 COPY environment-linux.yml /environment.yml
 
-RUN python3 -V
-RUN python3 -m pip install -r requirements.txt
+RUN apt install -y software-properties-common
+
+# adds add-apt-repository ^
+
+# RUN add-apt-repository ppa:deadsnakes/ppa
+# RUN apt update -y
+# RUN apt list | grep python3.9
+# RUN apt install -y \
+#   python3.10 python3-dev gcc
+# RUN mv /usr/bin/python3.10 /usr/bin/python
+
+# RUN python3 -V
+RUN pip uninstall flake8 -y
+RUN pip install -r requirements.txt
 
 # RUN conda update -n base conda --yes
 # RUN conda init bash
@@ -40,5 +52,5 @@ RUN python3 -m pip install -r requirements.txt
 
 
 # ENTRYPOINT ["./entrypoint.sh"]
-# CMD ["tail", "-f", "/dev/null"]
+CMD ["tail", "-f", "/dev/null"]
 # CMD ["python3", "main.py"]
