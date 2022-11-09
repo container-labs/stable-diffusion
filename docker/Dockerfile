@@ -1,6 +1,7 @@
-# TPU
-FROM gcr.io/deeplearning-platform-release/pytorch-xla:latest
+# FROM gcr.io/deeplearning-platform-release/pytorch-xla:latest
 # https://pytorch.org/xla/release/1.13/index.html
+FROM gcr.io/tpu-pytorch/xla:r1.13_3.7
+
 
 COPY requirements-linux.txt /requirements.txt
 COPY setup.py /setup.py
