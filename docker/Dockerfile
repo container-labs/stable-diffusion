@@ -7,6 +7,9 @@ COPY requirements-linux.txt /requirements.txt
 COPY setup.py /setup.py
 COPY environment-linux.yml /environment.yml
 
+RUN python3 -V
+RUN python3 -m pip install -r requirements.txt
+
 # RUN conda update -n base conda --yes
 # RUN conda init bash
 # # SHELL ["/bin/sh", "--login", "-c"]
