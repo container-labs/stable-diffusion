@@ -1,5 +1,4 @@
-# https://pytorch.org/xla/release/1.13/index.html
-FROM gcr.io/tpu-pytorch/xla:r1.13_3.7
+FROM gcr.io/deeplearning-platform-release/pytorch-gpu
 
 RUN mkdir /ml-workspace
 WORKDIR /ml-workspace
