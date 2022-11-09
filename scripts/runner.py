@@ -9,6 +9,8 @@ from torch import Generator
 
 # ln -s ../Common ./
 
+# todo: iterate over samplers
+
 def dummy(images, **kwargs):
     return images, False
 

@@ -2,19 +2,30 @@ version: "3"
 
 volumes:
   pip_cache:
+  conda_cache:
   model_cache:
 
 services:
   app:
     build:
-      context: ./docker
+      context: ./docker/notebook
       dockerfile: Dockerfile
+    # command: python3 main.py
     environment:
-      - HUGGINGFACE_TOKEN=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
+      - HUGGINGFACE_TOKEN=
+      - XRT_TPU_CONFIG="localservice;0;localhost:51011"
+    # mps not supported yet
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - capabilities: [gpu]
     # https://stackoverflow.com/questions/43844639/how-do-i-add-cached-or-delegated-into-a-docker-compose-yml-volumes-list
     volumes:
       - pip_cache:/root/.cache/pip:delegated
+      - conda_cache:/root/.cache/conda:delegated
       # TODO: make this one sync w/ localhost
       - model_cache:/root/.cache/huggingface:delegated
       - ./image_dir:/image_dir:default
+
 
