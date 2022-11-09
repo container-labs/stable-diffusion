@@ -11,9 +11,7 @@ COPY setup.py /ml-workspace/setup.py
 
 RUN pip uninstall flake8 -y
 RUN pip install -r requirements.txt
-ENV XRT_TPU_CONFIG localservice;0;localhost:51011
 
 COPY main.py .
 
-# ENTRYPOINT ["./entrypoint.sh"]
 CMD ["tail", "-f", "/dev/null"]
