@@ -2,17 +2,18 @@ import os
 
 import torch
 # TPUS
-import torch_xla.core.xla_model as xm
 from diffusers import StableDiffusionPipeline
 from GPUtil import showUtilization as gpu_usage
 
 
 def get_device():
-    print(xm.xla_device())
-    # https://pytorch.org/xla/release/1.13/index.html#xla-tensors-are-pytorch-tensors
-    if xm.xla_device().type == "xla":
-        return "xla"
-    elif torch.backends.mps.is_available():
+    # TODO:
+    # print(xm.xla_device())
+    # # https://pytorch.org/xla/release/1.13/index.html#xla-tensors-are-pytorch-tensors
+    # if xm.xla_device().type == "xla":
+    #     return "xla"
+
+    if torch.backends.mps.is_available():
         return "mps"
     elif torch.cuda.is_available():
         return "cuda"
