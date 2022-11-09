@@ -1,7 +1,7 @@
 GPUtil
 # https://cloud.google.com/vertex-ai/docs/workbench/managed/custom-container
-jupyterlab
-notebook
+# jupyterlab
+# notebook
 torch_xla
 albumentations==0.4.3
 einops==0.3.0
