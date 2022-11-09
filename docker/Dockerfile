@@ -6,11 +6,11 @@ COPY requirements-linux.txt /requirements.txt
 COPY setup.py /setup.py
 COPY environment-linux.yml /environment.yml
 
-RUN conda update -n base conda --yes
-RUN conda init bash
-# SHELL ["/bin/sh", "--login", "-c"]
-RUN . /root/.bashrc && conda env create -f environment.yml
-RUN jupyter kernelspec list --json
+# RUN conda update -n base conda --yes
+# RUN conda init bash
+# # SHELL ["/bin/sh", "--login", "-c"]
+# RUN . /root/.bashrc && conda env create -f environment.yml
+# RUN jupyter kernelspec list --json
 # Make RUN commands use the new environment:
 # RUN echo "conda activate stable-app" >> ~/.bashrc
 # SHELL ["/bin/sh", "--login", "-c"]
@@ -35,6 +35,6 @@ RUN jupyter kernelspec list --json
 
 
 
-ENTRYPOINT ["./entrypoint.sh"]
+# ENTRYPOINT ["./entrypoint.sh"]
 # CMD ["tail", "-f", "/dev/null"]
 # CMD ["python3", "main.py"]
