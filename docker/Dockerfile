@@ -4,8 +4,8 @@ FROM gcr.io/tpu-pytorch/xla:r1.13_3.7
 RUN mkdir /ml-workspace
 WORKDIR /ml-workspace
 
-COPY requirements-linux.txt /requirements.txt
-COPY setup.py /setup.py
+COPY requirements-linux.txt /ml-workspace/requirements.txt
+COPY setup.py /ml-workspace/setup.py
 # among other things, adds add-apt-repository
 # used to install newer versions of Python
 # RUN apt install -y software-properties-common
