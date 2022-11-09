@@ -6,7 +6,8 @@ COPY requirements-linux.txt /requirements.txt
 COPY setup.py /setup.py
 COPY environment-linux.yml /environment.yml
 
-RUN conda update conda --yes && conda init bash
+RUN conda update conda --yes
+RUN conda init bash
 # SHELL ["/bin/sh", "--login", "-c"]
 RUN . /root/.bashrc && conda env create -f environment.yml
 RUN jupyter kernelspec list --json
