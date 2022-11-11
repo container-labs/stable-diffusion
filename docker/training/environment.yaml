@@ -1,0 +1,99 @@
+name: training-test
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+dependencies:
+  - python>=3.9.0
+  - pip>=22.2.0
+  - pytorch=1.12.1
+  - torchvision=0.13.1
+  - cudatoolkit
+  - brotlipy=0.7.0=py39h5161555_1001
+  - bzip2=1.0.8=h3422bc3_4
+  - ca-certificates=2022.9.24=h4653dfc_0
+  - certifi=2022.9.24=pyhd8ed1ab_0
+  - cffi=1.15.1=py39h22df2f2_0
+  - charset-normalizer=2.1.1=pyhd8ed1ab_0
+  - colorama=0.4.6=pyhd8ed1ab_0
+  - cryptography=38.0.1=py39h834c97f_0
+  - diffusers=0.6.0=pyhd8ed1ab_0
+  - ffmpeg=4.2.2=h04105a8_0
+  - filelock=3.8.0=pyhd8ed1ab_0
+  - freetype=2.10.4=h17b34a0_1
+  - gettext=0.21.1=h0186832_0
+  - giflib=5.2.1=h27ca646_2
+  - gmp=6.2.1=h9f76cd9_0
+  - gnutls=3.6.15=h887c41c_0
+  - huggingface_hub=0.10.1=pyhd8ed1ab_0
+  - idna=3.4=pyhd8ed1ab_0
+  - importlib-metadata=5.0.0=pyha770c72_1
+  - importlib_metadata=5.0.0=hd8ed1ab_1
+  - jpeg=9e=he4db4b2_2
+  - lame=3.100=h1a8c8d9_1003
+  - lcms2=2.14=h8193b64_0
+  - lerc=3.0=hbdafb3b_0
+  - libblas=3.9.0=16_osxarm64_openblas
+  - libcblas=3.9.0=16_osxarm64_openblas
+  - libcxx=14.0.6=h848a8c0_0
+  - libdeflate=1.8=h1a28f6b_5
+  - libffi=3.4.2=hc377ac9_4
+  - libgfortran=5.0.0=11_3_0_hd922786_26
+  - libgfortran5=11.3.0=hdaf2cc0_26
+  - libiconv=1.17=he4db4b2_0
+  - libidn2=2.3.4=h1a8c8d9_0
+  - liblapack=3.9.0=16_osxarm64_openblas
+  - libopenblas=0.3.21=openmp_hc731615_3
+  - libopus=1.3.1=h27ca646_1
+  - libpng=1.6.37=hb8d0fd4_0
+  - libtasn1=4.19.0=h1a8c8d9_0
+  - libtiff=4.4.0=had003b8_1
+  - libunistring=0.9.10=h3422bc3_0
+  - libvpx=1.10.0=hc377ac9_0
+  - libwebp=1.2.4=h328b37c_0
+  - libwebp-base=1.2.4=h57fd34a_0
+  - llvm-openmp=15.0.4=h7cfbb63_0
+  - lz4-c=1.9.3=hbdafb3b_1
+  - ncurses=6.3=h1a28f6b_3
+  - nettle=3.7.3=h84b5d62_1
+  - numpy=1.20.3=py39h1f3b974_1
+  - openh264=1.8.0=h98b2900_0
+  - openssl=1.1.1s=h03a7124_0
+  - packaging=21.3=pyhd8ed1ab_0
+  - pillow=9.2.0=py39h4d1bdd5_1
+  - pycparser=2.21=pyhd8ed1ab_0
+  - pyopenssl=22.1.0=pyhd8ed1ab_0
+  - pyparsing=3.0.9=pyhd8ed1ab_0
+  - pysocks=1.7.1=pyha2e5f31_6
+  - python_abi=3.9=2_cp39
+  - pyyaml=6.0=py39h5161555_0
+  - readline=8.2=h1a28f6b_0
+  - regex=2021.10.23=py39h5161555_0
+  - requests=2.28.1=pyhd8ed1ab_1
+  - setuptools=65.5.0=py39hca03da5_0
+  - sqlite=3.39.3=h1058600_0
+  - tk=8.6.12=hb8d0fd4_0
+  - tqdm=4.64.1=pyhd8ed1ab_0
+  - typing-extensions=4.4.0=hd8ed1ab_0
+  - typing_extensions=4.4.0=pyha770c72_0
+  - tzdata=2022f=h04d1e81_0
+  - urllib3=1.26.11=pyhd8ed1ab_0
+  - wheel=0.37.1=pyhd3eb1b0_0
+  - x264=1!152.20180806=h1a28f6b_0
+  - xz=5.2.6=h1a28f6b_0
+  - yaml=0.2.5=h3422bc3_2
+  - zipp=3.10.0=pyhd8ed1ab_0
+  - zlib=1.2.13=h5a0b063_0
+  - zstd=1.5.2=h8574219_0
+  - pip:
+    - getpass_asterisk
+    - dependency_injector==4.40.0
+    - realesrgan==0.2.5.0
+    - test-tube==0.7.5
+    - -e git+https://github.com/CompVis/taming-transformers.git@master#egg=taming-transformers
+    - -e git+https://github.com/openai/CLIP.git@main#egg=clip
+    - -e git+https://github.com/Birch-san/k-diffusion.git@mps#egg=k_diffusion
+    - -e git+https://github.com/TencentARC/GFPGAN.git#egg=gfpgan
+    - -e git+https://github.com/invoke-ai/clipseg.git@models-rename#egg=clipseg
+    - -e .
+prefix: /Users/wbeebe/miniconda3/envs/training
