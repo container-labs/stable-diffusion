@@ -3,7 +3,7 @@ FROM gcr.io/deeplearning-platform-release/pytorch-gpu
 RUN mkdir /ml-workspace
 WORKDIR /ml-workspace
 
-COPY requirements-linux.txt .
+COPY requirements.txt .
 COPY setup.py .
 # among other things, adds add-apt-repository
 # used to install newer versions of Python
