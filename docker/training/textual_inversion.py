@@ -17,13 +17,13 @@ from accelerate.utils import set_seed
 from diffusers import (AutoencoderKL, DDPMScheduler, PNDMScheduler,
                        StableDiffusionPipeline, UNet2DConditionModel)
 from diffusers.optimization import get_scheduler
-from diffusers.pipelines.stable_diffusion import StableDiffusionSafetyChecker
+# from diffusers.pipelines.stable_diffusion import StableDiffusionSafetyChecker
 from huggingface_hub import HfFolder, Repository, whoami
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
 from tqdm.auto import tqdm
-from transformers import CLIPFeatureExtractor, CLIPTextModel, CLIPTokenizer
+from transformers import CLIPTextModel, CLIPTokenizer
 
 logger = get_logger(__name__)
 
@@ -555,7 +555,7 @@ def main():
             unet=unet,
             tokenizer=tokenizer,
             scheduler=PNDMScheduler.from_config("CompVis/stable-diffusion-v1-4", subfolder="scheduler"),
-            safety_checker=StableDiffusionSafetyChecker.from_pretrained("CompVis/stable-diffusion-safety-checker"),
+            safety_checker=None, #StableDiffusionSafetyChecker.from_pretrained("CompVis/stable-diffusion-safety-checker"),
             feature_extractor=CLIPFeatureExtractor.from_pretrained("openai/clip-vit-base-patch32"),
         )
         pipeline.save_pretrained(args.output_dir)

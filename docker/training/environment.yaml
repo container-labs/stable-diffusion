@@ -1,4 +1,4 @@
-name: training-test
+name: training
 channels:
   - conda-forge
   - pytorch
@@ -17,6 +17,8 @@ dependencies:
     - dependency_injector==4.40.0
     - realesrgan==0.2.5.0
     - test-tube==0.7.5
+    - pytorch-lightning
+    - transformers
     - -e git+https://github.com/CompVis/taming-transformers.git@master#egg=taming-transformers
     - -e git+https://github.com/openai/CLIP.git@main#egg=clip
     - -e git+https://github.com/Birch-san/k-diffusion.git@mps#egg=k_diffusion
