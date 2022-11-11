@@ -6,6 +6,8 @@ volumes:
 
 services:
   app:
+    # force amd so it's the same as remote
+    platform: linux/amd64
     build:
       context: ./docker/notebook
       dockerfile: Dockerfile
@@ -26,12 +28,15 @@ services:
       - model_cache:/root/.cache/huggingface:delegated
       - ./image_dir:/image_dir:default
   training:
+    # force amd so it's the same as remote
+    platform: linux/amd64
     build:
       context: ./docker/training
       dockerfile: Dockerfile
     # command: python3 main.py
     environment:
       - HUGGINGFACE_TOKEN=
+      - XDG_CACHE_HOME=/root/.cache
     volumes:
       - pip_cache:/root/.cache/pip:delegated
       # TODO: make this one sync w/ localhost
