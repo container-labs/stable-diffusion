@@ -2,7 +2,6 @@ version: "3"
 
 volumes:
   pip_cache:
-  conda_cache:
   model_cache:
 
 services:
@@ -23,7 +22,18 @@ services:
     # https://stackoverflow.com/questions/43844639/how-do-i-add-cached-or-delegated-into-a-docker-compose-yml-volumes-list
     volumes:
       - pip_cache:/root/.cache/pip:delegated
-      - conda_cache:/root/.cache/conda:delegated
+      # TODO: make this one sync w/ localhost
+      - model_cache:/root/.cache/huggingface:delegated
+      - ./image_dir:/image_dir:default
+  training:
+    build:
+      context: ./docker/training
+      dockerfile: Dockerfile
+    # command: python3 main.py
+    environment:
+      - HUGGINGFACE_TOKEN=
+    volumes:
+      - pip_cache:/root/.cache/pip:delegated
       # TODO: make this one sync w/ localhost
       - model_cache:/root/.cache/huggingface:delegated
       - ./image_dir:/image_dir:default
