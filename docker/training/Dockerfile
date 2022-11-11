@@ -18,7 +18,7 @@ COPY setup.py .
 
 COPY . .
 
-RUN conda env create -n test-conda -f environment.yaml
+RUN conda-env create -n training -f environment.yaml
 
 # to test dependencies
 # RUN python3.9 textual_inversion.py
