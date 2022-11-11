@@ -11,8 +11,8 @@ export DATA_DIR="./data"
 # print(torch.backends.mps.is_built())
 
 python textual_inversion.py \
-  --pretrained_model_name_or_path=$MODEL_NAME \
-  --train_data_dir=$DATA_DIR \
+  --pretrained_model_name_or_path=runwayml/stable-diffusion-v1-5 \
+  --train_data_dir=./data \
   --learnable_property="object" \
   --placeholder_token="<bored-ape>" --initializer_token="ape" \
   --resolution=512 \

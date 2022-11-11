@@ -451,10 +451,10 @@ def main():
     )
 
     # Move vae and unet to device
-    # vae.to(accelerator.device)
-    # unet.to(accelerator.device)
-    vae.to("mps")
-    unet.to("mps")
+    vae.to(accelerator.device)
+    unet.to(accelerator.device)
+    # vae.to("mps")
+    # unet.to("mps")
 
     # Keep vae and unet in eval model as we don't train these
     vae.eval()
@@ -490,7 +490,6 @@ def main():
     for epoch in range(args.num_train_epochs):
         text_encoder.train()
         for step, batch in enumerate(train_dataloader):
-            batch = batch.to("mps")
             with accelerator.accumulate(text_encoder):
                 # Convert images to latent space
                 latents = vae.encode(batch["pixel_values"]).latent_dist.sample().detach()
@@ -557,6 +556,7 @@ def main():
             scheduler=PNDMScheduler.from_config("CompVis/stable-diffusion-v1-4", subfolder="scheduler"),
             safety_checker=None, #StableDiffusionSafetyChecker.from_pretrained("CompVis/stable-diffusion-safety-checker"),
             feature_extractor=CLIPFeatureExtractor.from_pretrained("openai/clip-vit-base-patch32"),
+            use_auth_token=True,
         )
         pipeline.save_pretrained(args.output_dir)
         # Also save the newly trained embeddings

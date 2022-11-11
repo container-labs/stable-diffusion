@@ -2,6 +2,7 @@ name: training
 channels:
   - conda-forge
   - pytorch
+  - nvidia
   - defaults
 dependencies:
   - python>=3.9.0
@@ -11,6 +12,8 @@ dependencies:
   - cudatoolkit
   - huggingface_hub
   - diffusers==0.6.0
+  - pytorch-cuda=11.7
+  - torchaudio
   - numpy
   - pip:
     - getpass_asterisk

@@ -20,6 +20,8 @@ COPY . .
 
 RUN conda-env create -n training -f environment.yaml
 
+# conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia
+
 # to test dependencies
 # RUN python3.9 textual_inversion.py
 
