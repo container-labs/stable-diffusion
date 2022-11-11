@@ -12,6 +12,6 @@ COPY setup.py /ml-workspace/setup.py
 RUN pip uninstall flake8 -y
 RUN pip install -r requirements.txt
 
-COPY main.py .
+COPY . .
 
 CMD ["tail", "-f", "/dev/null"]

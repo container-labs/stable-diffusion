@@ -2,7 +2,7 @@ steps:
 - name: gcr.io/cloud-builders/docker
   args: ['build', '-t', 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/cuda/notebook', './docker/notebook']
 - name: gcr.io/cloud-builders/docker
-  args: ['build', '-t', 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/cuda/training', './docker/cuda']
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/cuda/training', './docker/training']
 options:
   machineType: 'E2_HIGHCPU_8'
 images:
