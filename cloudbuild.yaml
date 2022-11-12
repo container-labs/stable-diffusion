@@ -3,13 +3,12 @@ steps:
 #   args: ['build', '-t', 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/cuda/notebook', './docker/notebook']
 
 # https://cloud.google.com/build/docs/optimize-builds/speeding-up-builds#caching_directories_with_google_cloud_storage
-- name: gcr.io/cloud-builders/docker
-  id: base
-  args: ['build', '-t', 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/base', './docker/base']
-  waitFor: ['-']
 # - name: gcr.io/cloud-builders/docker
-#   args: ['build', '-t', 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training', './docker/training']
-#   waitFor: ['base']
+#   id: base
+#   args: ['build', '-t', 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/base', './docker/base']
+#   waitFor: ['-']
+- name: gcr.io/cloud-builders/docker
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training', './docker/training']
 # kaniko testing
 # - name: 'gcr.io/kaniko-project/executor:latest'
 #   waitFor: ['-']
@@ -26,11 +25,13 @@ steps:
 #   - --cache=true
 #   - --cache-ttl=6h
 options:
-  machineType: 'E2_HIGHCPU_32'
+  # since most of the build time is conda (python) setting up the environment
+  # we can't take advantage of multiple cpus
+  machineType: 'E2_HIGHCPU_8'
 images:
 # - 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/cuda/notebook'
-- 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/base'
-# - 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training'
+# - 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/base'
+- 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training'
 
 # steps:
 # - name: 'gcr.io/kaniko-project/executor:latest'
