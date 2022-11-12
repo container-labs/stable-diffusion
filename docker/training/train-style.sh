@@ -31,7 +31,7 @@ echo "Output Dir  = ${OUTPUT_DIR}"
 echo "DEFAULT     = ${DEFAULT}"
 
 conda init bash
-. /root/.bashrc
+eval "$(conda shell.bash hook)"
 conda activate training
 
 mkdir -p ${OUTPUT_DIR}
