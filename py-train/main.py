@@ -16,7 +16,7 @@ parser = argparse.ArgumentParser()
 #                     help='Number of steps per epoch.')
 
 JOB_NAME = "my_job_{}".format(int(time.time()))
-TRAIN_IMAGE = "us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/cuda/training:latest"
+TRAIN_IMAGE = "us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training:latest"
 MACHINE_TYPE_TRAINING = "n1-standard-8"
 
 CMDARGS = [

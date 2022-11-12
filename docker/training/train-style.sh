@@ -34,6 +34,8 @@ conda init bash
 . /root/.bashrc
 conda activate training
 
+mkdir -p ${OUTPUT_DIR}
+
 python textual_inversion.py \
   --pretrained_model_name_or_path=${MODEL_NAME} \
   --train_data_dir=./data \

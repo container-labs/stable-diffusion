@@ -2,5 +2,7 @@
 FROM us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/base:latest
 
 COPY . .
+RUN pwd
+RUN ls -al
 
 CMD ["tail", "-f", "/dev/null"]
