@@ -43,4 +43,11 @@ services:
       - model_cache:/root/.cache/huggingface:delegated
       - ./image_dir:/image_dir:default
 
-
+  orchestration:
+    build:
+      context: ./py-train
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=creds.json
+      - PROJECT_ID=md-wbeebe-0808-example-apps
+      - REGION=us-central1
+      - GCS_BUCKET=gs://md-ml
