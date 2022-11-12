@@ -11,5 +11,5 @@ RUN add-apt-repository -y 'ppa:deadsnakes/ppa'
 RUN apt update -y && apt install python3.9 -y
 RUN apt install python3.9-dev -y
 
-COPY environment.yaml environment.yaml
+COPY . .
 RUN conda-env create -n training -f environment.yaml
