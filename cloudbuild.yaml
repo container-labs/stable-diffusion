@@ -26,7 +26,7 @@ steps:
 #   - --cache=true
 #   - --cache-ttl=6h
 options:
-  machineType: 'E2_HIGHCPU_8'
+  machineType: 'E2_HIGHCPU_32'
 images:
 # - 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/cuda/notebook'
 - 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/base'
