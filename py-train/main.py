@@ -16,14 +16,11 @@ parser = argparse.ArgumentParser()
 #                     help='Number of steps per epoch.')
 
 JOB_NAME = "my_job_{}".format(int(time.time()))
-TRAIN_IMAGE = "us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training:latest"
+TRAIN_IMAGE = "us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/cuda/training:latest"
 MACHINE_TYPE_TRAINING = "n1-standard-8"
-# MACHINE_TYPE_TRAINING = "a2-highgpu-1g"
 
 CMDARGS = [
-    "./train-style.sh",
-    # "--steps=" + str(STEPS),
-    # "--distribute=" + TRAIN_STRATEGY,
+    "./train-style.sh --model=runwayml/stable-diffusion-v1-5 --output=/gcs/md-ml/model_out",
 ]
 
 aiplatform.init(project=os.getenv('PROJECT_ID'), location=os.getenv('REGION'), staging_bucket=os.getenv('GCS_BUCKET'))
