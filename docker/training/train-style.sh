@@ -13,6 +13,6 @@ python textual_inversion.py \
   --max_train_steps=1000 \
   --learning_rate=5.0e-04 --scale_lr \
   # https://cloud.google.com/vertex-ai/docs/training/code-requirements#fuse
-  --output_dir="gs://md-ml/textual_inversion_bored_ape"
+  --output_dir="gs://md-ml"
 
 
