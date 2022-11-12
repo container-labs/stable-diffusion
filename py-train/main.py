@@ -20,7 +20,7 @@ TRAIN_IMAGE = "us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn
 MACHINE_TYPE_TRAINING = "n1-standard-8"
 
 CMDARGS = [
-    "./train-style.sh --model=runwayml/stable-diffusion-v1-5 --output=/gcs/md-ml/model_out",
+    "--model=runwayml/stable-diffusion-v1-5 --output=/gcs/md-ml/model_out",
 ]
 
 aiplatform.init(project=os.getenv('PROJECT_ID'), location=os.getenv('REGION'), staging_bucket=os.getenv('GCS_BUCKET'))
@@ -28,7 +28,7 @@ aiplatform.init(project=os.getenv('PROJECT_ID'), location=os.getenv('REGION'), s
 job = aiplatform.CustomContainerTrainingJob(
     display_name=JOB_NAME,
     container_uri=TRAIN_IMAGE,
-    # command=CMDARGS,
+    command=["./train-style.sh"],
     model_serving_container_image_uri=TRAIN_IMAGE
 )
 
