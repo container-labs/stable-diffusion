@@ -5,4 +5,9 @@ COPY . .
 RUN pwd
 RUN ls -al
 
+RUN conda init bash && \
+  eval "$(conda shell.bash hook)" && \
+  conda activate training && \
+  conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch-nightly -c nvidia
+
 CMD ["tail", "-f", "/dev/null"]

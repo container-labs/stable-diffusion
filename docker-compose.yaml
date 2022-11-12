@@ -35,7 +35,7 @@ services:
       dockerfile: Dockerfile
     # command: python3 main.py
     environment:
-      - HUGGINGFACE_TOKEN=
+      - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
       - XDG_CACHE_HOME=/root/.cache
     volumes:
       - pip_cache:/root/.cache/pip:delegated
@@ -47,6 +47,7 @@ services:
     build:
       context: ./py-train
     environment:
+      - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
       - GOOGLE_APPLICATION_CREDENTIALS=creds.json
       - PROJECT_ID=md-wbeebe-0808-example-apps
       - REGION=us-central1

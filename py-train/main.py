@@ -15,12 +15,14 @@ parser = argparse.ArgumentParser()
 #                     default=200, type=int,
 #                     help='Number of steps per epoch.')
 
-JOB_NAME = "my_job_{}".format(int(time.time()))
+JOB_NAME = "job_{}".format(int(time.time()))
+JOB_OUTPUT = "job_{}".format(int(time.time()))
 TRAIN_IMAGE = "us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training:latest"
 MACHINE_TYPE_TRAINING = "n1-standard-8"
 
 CMDARGS = [
-    "--model=runwayml/stable-diffusion-v1-5 --output=/gcs/md-ml/model_out",
+    "--model=runwayml/stable-diffusion-v1-5",
+    "--output=/gcs/md-ml/${JOB_OUTPUT}",
 ]
 
 aiplatform.init(project=os.getenv('PROJECT_ID'), location=os.getenv('REGION'), staging_bucket=os.getenv('GCS_BUCKET'))
@@ -32,6 +34,7 @@ job = aiplatform.CustomContainerTrainingJob(
     model_serving_container_image_uri=TRAIN_IMAGE
 )
 
+# https://cloud.google.com/python/docs/reference/aiplatform/latest/google.cloud.aiplatform.CustomContainerTrainingJob#google_cloud_aiplatform_CustomContainerTrainingJob_run
 job.run(
     model_display_name="hello_world",
     args=CMDARGS,
@@ -40,4 +43,7 @@ job.run(
     accelerator_type="NVIDIA_TESLA_K80",
     # accelerator_type="NVIDIA_TESLA_P100",
     accelerator_count=1,
+    environment_variables={
+      'HUGGINGFACE_TOKEN': os.getenv('HUGGINGFACE_TOKEN')
+    },
 )

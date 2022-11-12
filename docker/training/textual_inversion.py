@@ -27,6 +27,9 @@ from transformers import CLIPTextModel, CLIPTokenizer
 
 logger = get_logger(__name__)
 
+print('HUGGINGFACE_TOKEN')
+print(os.getenv('HUGGINGFACE_TOKEN'))
+
 
 def save_progress(text_encoder, placeholder_token_id, accelerator, args):
     logger.info("Saving embeddings")
