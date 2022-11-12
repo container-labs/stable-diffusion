@@ -3,6 +3,10 @@
 export MODEL_NAME="runwayml/stable-diffusion-v1-5"
 export DATA_DIR="./data"
 
+conda init bash
+. /root/.bashrc
+conda activate training
+
 python textual_inversion.py \
   --pretrained_model_name_or_path=runwayml/stable-diffusion-v1-5 \
   --train_data_dir=./data \
