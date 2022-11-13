@@ -10,8 +10,12 @@ for i in "$@"; do
       MODEL_NAME="${i#*=}"
       shift # past argument=value
       ;;
-    -d=*|--data=*)
-      DATA_DIR="${i#*=}"
+    -x=*|--style=*)
+      STYLE="${i#*=}"
+      shift # past argument=value
+      ;;
+    -p=*|--phrase=*)
+      PHRASE="${i#*=}"
       shift # past argument=value
       ;;
     -o=*|--output=*)
@@ -22,25 +26,9 @@ for i in "$@"; do
       MAX_STEPS="${i#*=}"
       shift # past argument=value
       ;;
-    -p=*|--phrase=*)
-      PHRASE="${i#*=}"
+    -n=*|--number=*)
+      NUM_IMAGES="${i#*=}"
       shift # past argument=value
-      ;;
-    -r=*|--repeat=*)
-      REPEAT_TRAINING_COUNT="${i#*=}"
-      shift # past argument=value
-      ;;
-    -b=*|--batch=*)
-      BATCH_SIZE="${i#*=}"
-      shift # past argument=value
-      ;;
-    -t=*|--token=*)
-      PHRASE_TOKEN="${i#*=}"
-      shift # past argument=value
-      ;;
-    --default)
-      DEFAULT=YES
-      shift # past argument with no value
       ;;
     -*|--*)
       echo "Unknown option $i"
@@ -52,22 +40,19 @@ for i in "$@"; do
 done
 
 echo "Model Name  = ${MODEL_NAME}"
-echo "Data Dir    = ${DATA_DIR}"
-echo "Output Dir  = ${OUTPUT_DIR}"
-echo "DEFAULT     = ${DEFAULT}"
-echo "Max Steps   = ${MAX_STEPS}"
+echo "Style      = ${STYLE}"
 echo "Phrase      = ${PHRASE}"
-echo "Phrase token     = ${PHRASE_TOKEN}"
-echo "Repeat trainng      = ${REPEAT_TRAINING_COUNT}"
-echo "Batch size     = ${BATCH_SIZE}"
+echo "Output Dir  = ${OUTPUT_DIR}"
+echo "Max Steps   = ${MAX_STEPS}"
 
-# conda init bash
 eval "$(conda shell.bash hook)"
 conda activate training
-
 mkdir -p ${OUTPUT_DIR}
 
 python main.py \
   --pretrained_model_name_or_path=${MODEL_NAME} \
+  --style=${STYLE} \
+  --phrase=${PHRASE} \
+  --num_images=${NUM_IMAGES} \
   --output_dir=${OUTPUT_DIR} \
   --max_steps=${MAX_STEPS}
