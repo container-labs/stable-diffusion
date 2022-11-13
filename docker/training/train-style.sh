@@ -22,6 +22,18 @@ for i in "$@"; do
       MAX_STEPS="${i#*=}"
       shift # past argument=value
       ;;
+    -p=*|--phrase=*)
+      PHRASE="${i#*=}"
+      shift # past argument=value
+      ;;
+    -r=*|--repeat=*)
+      REPEAT_TRAINING_COUNT="${i#*=}"
+      shift # past argument=value
+      ;;
+    -b=*|--batch=*)
+      BATCH_SIZE="${i#*=}"
+      shift # past argument=value
+      ;;
     --default)
       DEFAULT=YES
       shift # past argument with no value
@@ -40,6 +52,9 @@ echo "Data Dir    = ${DATA_DIR}"
 echo "Output Dir  = ${OUTPUT_DIR}"
 echo "DEFAULT     = ${DEFAULT}"
 echo "Max Steps   = ${MAX_STEPS}"
+echo "Phrase      = ${PHRASE}"
+echo "Repeat trainng      = ${REPEAT_TRAINING_COUNT}"
+echo "Batch size     = ${BATCH_SIZE}"
 
 # conda init bash
 eval "$(conda shell.bash hook)"
@@ -50,10 +65,11 @@ mkdir -p ${OUTPUT_DIR}
 python textual_inversion.py \
   --pretrained_model_name_or_path=${MODEL_NAME} \
   --train_data_dir=${DATA_DIR} \
-  --learnable_property="object" \
-  --placeholder_token="<bored-ape>" --initializer_token="ape" \
+  --learnable_property="style" \
+  --repeats=${REPEAT_TRAINING_COUNT} \
+  --placeholder_token="${PHRASE}" --initializer_token="ape" \
   --resolution=512 \
-  --train_batch_size=1 \
+  --train_batch_size=${BATCH_SIZE} \
   --max_train_steps=${MAX_STEPS} \
   --learning_rate=5.0e-04 --scale_lr \
   --output_dir=${OUTPUT_DIR}
