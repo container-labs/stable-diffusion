@@ -3,6 +3,7 @@ version: "3"
 volumes:
   pip_cache:
   model_cache:
+  conda_cache:
 
 services:
   app:
@@ -13,7 +14,7 @@ services:
       dockerfile: Dockerfile
     # command: python3 main.py
     environment:
-      - HUGGINGFACE_TOKEN=
+      - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
       - XRT_TPU_CONFIG="localservice;0;localhost:51011"
     # mps not supported yet
     # deploy:
@@ -27,25 +28,69 @@ services:
       # TODO: make this one sync w/ localhost
       - model_cache:/root/.cache/huggingface:delegated
       - ./image_dir:/image_dir:default
+
+  base:
+    platform: linux/amd64
+    build:
+      context: ./ml-base
+      dockerfile: Dockerfile.base
+    environment:
+      - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
+    volumes:
+      - pip_cache:/root/.cache/pip:delegated
+      # TODO: make this one sync w/ localhost
+      - model_cache:/root/.cache/huggingface:delegated
+      - ./image_dir:/image_dir:default
+  training-base:
+    platform: linux/amd64
+    build:
+      context: ./ml-base
+      dockerfile: Dockerfile.training-base
+      args:
+        - BASE_IMAGE=stable-diffusion_base
+    environment:
+      - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
+    volumes:
+      - conda_cache:/root/.conda:delegated
+      - pip_cache:/root/.cache/pip:delegated
+      # TODO: make this one sync w/ localhost
+      - model_cache:/root/.cache/huggingface:delegated
+      - ./image_dir:/image_dir:default
+
   training:
     # force amd so it's the same as remote
     platform: linux/amd64
     build:
       context: ./docker/training
       dockerfile: Dockerfile
-    # command: python3 main.py
+      args:
+        - BASE_IMAGE=stable-diffusion_training-base
+      # entrypoint:
+      #   - ./train-style.sh
     environment:
       - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
-      - XDG_CACHE_HOME=/root/.cache
     volumes:
+      - conda_cache:/root/.conda:delegated
       - pip_cache:/root/.cache/pip:delegated
-      # TODO: make this one sync w/ localhost
-      - model_cache:/root/.cache/huggingface:delegated
+      - ./model-cache:/root/.cache/huggingface:default
       - ./image_dir:/image_dir:default
 
   orchestration:
     build:
       context: ./py-train
+    environment:
+      - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
+      - GOOGLE_APPLICATION_CREDENTIALS=creds.json
+      - GOOGLE_CLOUD_PROJECT=md-wbeebe-0808-example-apps
+      - REGION=us-central1
+      - GCS_BUCKET=gs://md-ml
+      - GCP_TOPIC=training-requests
+      - GCP_SUBSCRIPTION=trainer-sub
+
+  model-loader:
+    build:
+      context: ./docker/model-loader
+      dockerfile: Dockerfile
     environment:
       - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
       - GOOGLE_APPLICATION_CREDENTIALS=creds.json

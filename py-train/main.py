@@ -4,6 +4,16 @@ import time
 
 from google.cloud import aiplatform
 
+topic_name = 'projects/{project_id}/topics/{topic}'.format(
+    project_id=os.getenv('GOOGLE_CLOUD_PROJECT'),
+    topic=os.getenv('GCP_TOPIC'),  # Set this to something appropriate.
+)
+
+subscription_name = 'projects/{project_id}/subscriptions/{sub}'.format(
+    project_id=os.getenv('GOOGLE_CLOUD_PROJECT'),
+    sub=os.getenv('GCP_SUBSCRIPTION'),  # Set this to something appropriate.
+)
+
 parser = argparse.ArgumentParser()
 # parser.add_argument('--lr', dest='lr',
 #                     default=0.01, type=float,
@@ -15,24 +25,44 @@ parser = argparse.ArgumentParser()
 #                     default=200, type=int,
 #                     help='Number of steps per epoch.')
 
-JOB_NAME = "job_{}".format(int(time.time()))
-JOB_OUTPUT = "job_{}".format(int(time.time()))
+JOB_NAME = "job-{}".format(int(time.time()))
 TRAIN_IMAGE = "us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training:latest"
-MACHINE_TYPE_TRAINING = "n1-standard-8"
+# MACHINE_TYPE_TRAINING = "n1-highmem-8"
+# ACCELERATOR_TYPE_TRAINING = "NVIDIA_TESLA_K80"
+MACHINE_TYPE_TRAINING = "n1-highmem-16"
+ACCELERATOR_TYPE_TRAINING = "NVIDIA_TESLA_P100"
+# Training doesn't use more than 1 GPU with our config
+ACCELERATOR_COUNT = 1
+# MACHINE_TYPE_TRAINING = "a2-highgpu-1g"
+# ACCELERATOR_TYPE_TRAINING = "NVIDIA_TESLA_A100"
+# ACCELERATOR_COUNT = 1
 
 CMDARGS = [
-    "--model=runwayml/stable-diffusion-v1-5",
-    "--output=/gcs/md-ml/${JOB_OUTPUT}",
+    "--model=CompVis/stable-diffusion-v1-4",
+    "--data=/gcs/md-ml/training-data",
+    f"--output=/gcs/md-ml/{JOB_NAME}",
+    "--steps=1000",
 ]
 
-aiplatform.init(project=os.getenv('PROJECT_ID'), location=os.getenv('REGION'), staging_bucket=os.getenv('GCS_BUCKET'))
+aiplatform.init(project=os.getenv('GOOGLE_CLOUD_PROJECT'), location=os.getenv('REGION'), staging_bucket=os.getenv('GCS_BUCKET'))
+
+# def callback(message):
+#     print(message.data)
+#     message.ack()
+
+
+# with pubsub_v1.SubscriberClient() as subscriber:
+#     subscriber.create_subscription(
+#         name=subscription_name, topic=topic_name)
+#     future = subscriber.subscribe(subscription_name, callback)
+
 
 job = aiplatform.CustomContainerTrainingJob(
-    display_name=JOB_NAME,
-    container_uri=TRAIN_IMAGE,
-    command=["./train-style.sh"],
-    model_serving_container_image_uri=TRAIN_IMAGE
-)
+        display_name=JOB_NAME,
+        container_uri=TRAIN_IMAGE,
+        command=["./train-style.sh"],
+        model_serving_container_image_uri=TRAIN_IMAGE
+    )
 
 # https://cloud.google.com/python/docs/reference/aiplatform/latest/google.cloud.aiplatform.CustomContainerTrainingJob#google_cloud_aiplatform_CustomContainerTrainingJob_run
 job.run(
@@ -40,9 +70,8 @@ job.run(
     args=CMDARGS,
     replica_count=1,
     machine_type=MACHINE_TYPE_TRAINING,
-    accelerator_type="NVIDIA_TESLA_K80",
-    # accelerator_type="NVIDIA_TESLA_P100",
-    accelerator_count=1,
+    accelerator_type=ACCELERATOR_TYPE_TRAINING,
+    accelerator_count=ACCELERATOR_COUNT,
     environment_variables={
       'HUGGINGFACE_TOKEN': os.getenv('HUGGINGFACE_TOKEN')
     },

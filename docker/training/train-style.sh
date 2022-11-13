@@ -59,4 +59,3 @@ python textual_inversion.py \
   --output_dir=${OUTPUT_DIR}
 
 
-# mv ${OUTPUT_DIR} /gcs/md-ml/${OUTPUT_DIR}

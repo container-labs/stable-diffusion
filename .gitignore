@@ -1,5 +1,6 @@
 creds.json
 image_dir/
+model-cache
 
 # Created by https://www.toptal.com/developers/gitignore/api/osx,windows,linux,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=osx,windows,linux,python

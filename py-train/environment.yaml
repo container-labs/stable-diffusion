@@ -8,5 +8,4 @@ dependencies:
   - python>=3.9.0
   - pip>=22.2.0
   - google-cloud-aiplatform
-  - argparse
 
