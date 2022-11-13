@@ -7,9 +7,8 @@ RUN ls -al
 
 RUN conda init bash && \
   eval "$(conda shell.bash hook)" && \
-  conda activate training && \
-  conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch-nightly -c nvidia
+  conda activate training
 
-RUN conda update --all
+# RUN conda update --all
 
 CMD ["tail", "-f", "/dev/null"]
