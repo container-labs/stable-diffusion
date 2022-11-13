@@ -97,3 +97,27 @@ services:
       - PROJECT_ID=md-wbeebe-0808-example-apps
       - REGION=us-central1
       - GCS_BUCKET=gs://md-ml
+
+  gcloud:
+    image: google/cloud-sdk:latest
+    volumes:
+      - ./creds.json:/creds.json
+      - ./gcloud-vol:/root/gcloud-vol
+    command: >
+      bash -c "
+      mkdir -p /root/gcloud-vol/job-1668365875 &&
+      gcloud auth activate-service-account --key-file=/creds.json &&
+      gcloud config set project md-wbeebe-0808-example-apps &&
+      gsutil ls gs://md-ml &&
+      gsutil -m cp -r \
+        "gs://md-ml/job-1668365875/feature_extractor" \
+        "gs://md-ml/job-1668365875/learned_embeds.bin" \
+        "gs://md-ml/job-1668365875/model_index.json" \
+        "gs://md-ml/job-1668365875/safety_checker" \
+        "gs://md-ml/job-1668365875/scheduler" \
+        "gs://md-ml/job-1668365875/text_encoder" \
+        "gs://md-ml/job-1668365875/tokenizer" \
+        "gs://md-ml/job-1668365875/unet" \
+        "gs://md-ml/job-1668365875/vae" \
+        /root/gcloud-vol/job-1668365875
+      "

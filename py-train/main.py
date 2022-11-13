@@ -41,7 +41,16 @@ CMDARGS = [
     "--model=CompVis/stable-diffusion-v1-4",
     "--data=/gcs/md-ml/training-data",
     f"--output=/gcs/md-ml/{JOB_NAME}",
-    "--steps=1000",
+    # Higher training step values will lead to a more accurate representation fo the concept
+    "--steps=2000",
+    "--phrase=boredapestyle",
+    "--token=boredape",
+    "--repeat=100",
+    "--batch=1",
+    #  seed will change the 'randomness' the diffusion model is using to construct the sample images to calculate the loss
+    # TODO: expose seed as a hyperparameter to train
+    #  change the train_batch_size if we are on a GPU with more than ~16GB of VRAM
+    # TODO: explore batch size
 ]
 
 aiplatform.init(project=os.getenv('GOOGLE_CLOUD_PROJECT'), location=os.getenv('REGION'), staging_bucket=os.getenv('GCS_BUCKET'))

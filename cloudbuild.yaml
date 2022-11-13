@@ -9,6 +9,9 @@ steps:
 #   waitFor: ['-']
 - name: gcr.io/cloud-builders/docker
   args: ['build', '-t', 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training', './docker/training']
+- name: gcr.io/cloud-builders/docker
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/process', './docker/process']
+  waitFor: ['-']
 # kaniko testing
 # - name: 'gcr.io/kaniko-project/executor:latest'
 #   waitFor: ['-']
@@ -32,6 +35,7 @@ images:
 # - 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/cuda/notebook'
 # - 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/base'
 - 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training'
+- 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/process'
 
 # steps:
 # - name: 'gcr.io/kaniko-project/executor:latest'
