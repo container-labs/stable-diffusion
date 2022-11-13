@@ -10,4 +10,6 @@ RUN conda init bash && \
   conda activate training && \
   conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch-nightly -c nvidia
 
+RUN conda update --all
+
 CMD ["tail", "-f", "/dev/null"]
