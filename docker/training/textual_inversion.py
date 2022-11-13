@@ -552,10 +552,10 @@ def main():
             vae=vae,
             unet=unet,
             tokenizer=tokenizer,
-            scheduler=PNDMScheduler.from_config("CompVis/stable-diffusion-v1-4", subfolder="scheduler"),
+            scheduler=PNDMScheduler.from_config("CompVis/stable-diffusion-v1-4", subfolder="scheduler", use_auth_token=os.getenv('HUGGINGFACE_TOKEN')),
             safety_checker=None, #StableDiffusionSafetyChecker.from_pretrained("CompVis/stable-diffusion-safety-checker"),
             feature_extractor=CLIPFeatureExtractor.from_pretrained("openai/clip-vit-base-patch32", use_auth_token=os.getenv('HUGGINGFACE_TOKEN')),
-            use_auth_token=True,
+            use_auth_token=os.getenv('HUGGINGFACE_TOKEN'),
         )
         pipeline.save_pretrained(args.output_dir)
         # Also save the newly trained embeddings
