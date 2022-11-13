@@ -17,7 +17,7 @@ from accelerate.utils import set_seed
 from diffusers import (AutoencoderKL, DDPMScheduler, PNDMScheduler,
                        StableDiffusionPipeline, UNet2DConditionModel)
 from diffusers.optimization import get_scheduler
-# from diffusers.pipelines.stable_diffusion import StableDiffusionSafetyChecker
+from diffusers.pipelines.stable_diffusion import StableDiffusionSafetyChecker
 from huggingface_hub import HfFolder, Repository, whoami
 from PIL import Image
 from torch.utils.data import Dataset
@@ -553,15 +553,15 @@ def main():
             unet=unet,
             tokenizer=tokenizer,
             scheduler=PNDMScheduler.from_config("CompVis/stable-diffusion-v1-4", subfolder="scheduler", use_auth_token=os.getenv('HUGGINGFACE_TOKEN')),
-            safety_checker=None, #StableDiffusionSafetyChecker.from_pretrained("CompVis/stable-diffusion-safety-checker"),
+            safety_checker=StableDiffusionSafetyChecker.from_pretrained("CompVis/stable-diffusion-safety-checker", use_auth_token=os.getenv('HUGGINGFACE_TOKEN')),
             feature_extractor=CLIPFeatureExtractor.from_pretrained("openai/clip-vit-base-patch32", use_auth_token=os.getenv('HUGGINGFACE_TOKEN')),
         )
         pipeline.save_pretrained(args.output_dir)
         # Also save the newly trained embeddings
         save_progress(text_encoder, placeholder_token_id, accelerator, args)
 
-        if args.push_to_hub:
-            repo.push_to_hub(commit_message="End of training", blocking=False, auto_lfs_prune=True)
+        # if args.push_to_hub:
+        #     repo.push_to_hub(commit_message="End of training", blocking=False, auto_lfs_prune=True)
 
     accelerator.end_training()
 

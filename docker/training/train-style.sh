@@ -58,3 +58,5 @@ python textual_inversion.py \
   --learning_rate=5.0e-04 --scale_lr \
   --output_dir=${OUTPUT_DIR}
 
+
+# mv ${OUTPUT_DIR} /gcs/md-ml/${OUTPUT_DIR}
