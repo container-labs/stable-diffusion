@@ -66,7 +66,8 @@ python textual_inversion.py \
   --train_data_dir=${DATA_DIR} \
   --learnable_property="object" \
   --repeats=${REPEAT_TRAINING_COUNT} \
-  --placeholder_token=${PHRASE} --initializer_token=${PHRASE_TOKEN} \
+  --placeholder_token=${PHRASE} \
+  --initializer_token=${PHRASE_TOKEN} \
   --resolution=512 \
   --train_batch_size=${BATCH_SIZE} \
   --max_train_steps=${MAX_STEPS} \
