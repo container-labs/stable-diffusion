@@ -6,4 +6,5 @@ COPY . .
 RUN pwd
 RUN ls -al
 
-CMD ["tail", "-f", "/dev/null"]
+CMD ["./train-style.sh", "--output=output", "--model=CompVis/stable-diffusion-v1-4", "--data=/image_dir"]
+# CMD ["tail", "-f", "/dev/null"]
