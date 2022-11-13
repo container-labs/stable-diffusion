@@ -36,7 +36,7 @@ echo "Data Dir    = ${DATA_DIR}"
 echo "Output Dir  = ${OUTPUT_DIR}"
 echo "DEFAULT     = ${DEFAULT}"
 
-conda init bash
+# conda init bash
 eval "$(conda shell.bash hook)"
 conda activate training
 

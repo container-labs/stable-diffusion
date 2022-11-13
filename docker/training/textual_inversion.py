@@ -27,10 +27,6 @@ from transformers import CLIPTextModel, CLIPTokenizer
 
 logger = get_logger(__name__)
 
-print('HUGGINGFACE_TOKEN')
-print(os.getenv('HUGGINGFACE_TOKEN'))
-
-
 def save_progress(text_encoder, placeholder_token_id, accelerator, args):
     logger.info("Saving embeddings")
     learned_embeds = accelerator.unwrap_model(text_encoder).get_input_embeddings().weight[placeholder_token_id]
@@ -421,7 +417,7 @@ def main():
         eps=args.adam_epsilon,
     )
 
-    noise_scheduler = DDPMScheduler.from_config("CompVis/stable-diffusion-v1-4", subfolder="scheduler")
+    noise_scheduler = DDPMScheduler.from_config("CompVis/stable-diffusion-v1-4", subfolder="scheduler",  use_auth_token=os.getenv('HUGGINGFACE_TOKEN'))
 
     train_dataset = TextualInversionDataset(
         data_root=args.train_data_dir,
