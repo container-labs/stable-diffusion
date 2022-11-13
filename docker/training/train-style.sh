@@ -34,6 +34,10 @@ for i in "$@"; do
       BATCH_SIZE="${i#*=}"
       shift # past argument=value
       ;;
+    -t=*|--token=*)
+      PHRASE_TOKEN="${i#*=}"
+      shift # past argument=value
+      ;;
     --default)
       DEFAULT=YES
       shift # past argument with no value
@@ -53,6 +57,7 @@ echo "Output Dir  = ${OUTPUT_DIR}"
 echo "DEFAULT     = ${DEFAULT}"
 echo "Max Steps   = ${MAX_STEPS}"
 echo "Phrase      = ${PHRASE}"
+echo "Phrase token     = ${PHRASE_TOKEN}"
 echo "Repeat trainng      = ${REPEAT_TRAINING_COUNT}"
 echo "Batch size     = ${BATCH_SIZE}"
 
@@ -67,7 +72,7 @@ python textual_inversion.py \
   --train_data_dir=${DATA_DIR} \
   --learnable_property="style" \
   --repeats=${REPEAT_TRAINING_COUNT} \
-  --placeholder_token="${PHRASE}" --initializer_token="ape" \
+  --placeholder_token=${PHRASE} --initializer_token=${PHRASE_TOKEN} \
   --resolution=512 \
   --train_batch_size=${BATCH_SIZE} \
   --max_train_steps=${MAX_STEPS} \
