@@ -21,13 +21,13 @@ def parse_args():
     )
     parser.add_argument(
         "--max_steps",
-        type=str,
+         type=int,
         default="100",
         help="",
     )
     parser.add_argument(
         "--num_images",
-        type=str,
+        type=int,
         default="50",
         help="",
     )
