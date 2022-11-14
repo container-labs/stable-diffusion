@@ -52,7 +52,7 @@ mkdir -p ${OUTPUT_DIR}
 python main.py \
   --pretrained_model_name_or_path=${MODEL_NAME} \
   --style=${STYLE} \
-  --phrase=${PHRASE} \
+  --phrase="${PHRASE}" \
   --num_images=${NUM_IMAGES} \
   --output_dir=${OUTPUT_DIR} \
   --max_steps=${MAX_STEPS}

@@ -34,7 +34,7 @@ def parse_args():
     parser.add_argument(
         "--style",
         type=str,
-        default="boredape",
+        default="epaderod",
         help="",
     )
     parser.add_argument(
@@ -55,10 +55,11 @@ pipe = StableDiffusionPipeline.from_pretrained(
 ).to("cuda")
 
 for i in range(args.num_images):
+  image_path = f"{args.output_dir}/{args.style}-{i}.png"
   result = pipe(
-        f"{args.style}, {args.phrase}",
+        f"{args.style} {args.phrase}",
         num_inference_steps=args.max_steps,
         )
   image = result.images[0]
-  image.save(f"{args.output_dir}/ape-{i}.png")
+  image.save(f"{args.output_dir}/{args.style}-{i}.png")
 
