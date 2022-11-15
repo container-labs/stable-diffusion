@@ -38,6 +38,10 @@ for i in "$@"; do
       PHRASE_TOKEN="${i#*=}"
       shift # past argument=value
       ;;
+    -l=*|--learning=*)
+      LEARNING_RATE="${i#*=}"
+      shift # past argument=value
+      ;;
     --default)
       DEFAULT=YES
       shift # past argument with no value
@@ -58,6 +62,7 @@ echo "DEFAULT     = ${DEFAULT}"
 echo "Max Steps   = ${MAX_STEPS}"
 echo "Phrase      = ${PHRASE}"
 echo "Phrase token     = ${PHRASE_TOKEN}"
+echo "Learning rate = ${LEARNING_RATE}"
 echo "Repeat trainng      = ${REPEAT_TRAINING_COUNT}"
 echo "Batch size     = ${BATCH_SIZE}"
 
@@ -77,7 +82,8 @@ python textual_inversion.py \
   --resolution=512 \
   --train_batch_size=${BATCH_SIZE} \
   --max_train_steps=${MAX_STEPS} \
-  --learning_rate=5.0e-04 --scale_lr \
+  --learning_rate=${LEARNING_RATE} \
+  --scale_lr \
   --output_dir=${OUTPUT_DIR}
 
 
