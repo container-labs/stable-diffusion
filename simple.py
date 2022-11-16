@@ -1,3 +1,5 @@
+import time
+
 from diffusers import StableDiffusionPipeline
 from GPUtil import showUtilization as gpu_usage
 
@@ -12,14 +14,14 @@ pipe = StableDiffusionPipeline.from_pretrained(
 for i in range(10):
   # run it
   result = pipe(
-        "bored ape style, Elon Musk",
-        num_inference_steps=20)
+        "\"bored ape\" style Elon Musk",
+        num_inference_steps=100)
   image = result.images[0]
 
   gpu_usage()
   # notebook only
   # display(image)
-  image.save(f"image_dir/out/ape-{i}.png")
+  image.save(f"image_dir/out/ape-{i}-{int(time.time())}.png")
 
 # this paired down example will be the first prod pipeline
 # after a fucking week of exploration and building and docker hell

@@ -72,6 +72,9 @@ class Runner:
         generator=generator)
       image = result.images[0]
       image_path = f"styles-{self.model_style}-{uid}-{seed}.png"
+      if image == None:
+        print(f"Failed to generate image for {run_name}")
+        continue
       image.save(image_path)
       if self.facetool_strength > 0.0:
         image_file = Image.open(image_path)
