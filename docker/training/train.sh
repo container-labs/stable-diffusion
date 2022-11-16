@@ -46,6 +46,10 @@ for i in "$@"; do
       LEARNING_RATE="${i#*=}"
       shift # past argument=value
       ;;
+    -k=*|--kind=*)
+      LEARNABLE_PROP="${i#*=}"
+      shift # past argument=value
+      ;;
     -*|--*)
       echo "Unknown option $i"
       exit 1
@@ -58,6 +62,7 @@ done
 mkdir -p ${OUTPUT_DIR}
 echo "Model Name     = ${MODEL_NAME}" >> ${OUTPUT_DIR}/training.metadata
 echo "Data Dir       = ${DATA_DIR}" >> ${OUTPUT_DIR}/training.metadata
+echo "Learnable prop = ${LEARNABLE_PROP}" >> ${OUTPUT_DIR}/training.metadata
 echo "Output Dir     = ${OUTPUT_DIR}" >> ${OUTPUT_DIR}/training.metadata
 echo "Max Steps      = ${MAX_STEPS}" >> ${OUTPUT_DIR}/training.metadata
 echo "Phrase         = ${PHRASE}" >> ${OUTPUT_DIR}/training.metadata
@@ -69,7 +74,7 @@ echo "Batch size     = ${BATCH_SIZE}" >> ${OUTPUT_DIR}/training.metadata
 python textual_inversion.py \
   --pretrained_model_name_or_path=${MODEL_NAME} \
   --train_data_dir=${DATA_DIR} \
-  --learnable_property="style" \
+  --learnable_property=${LEARNABLE_PROP} \
   --repeats=${REPEAT_TRAINING_COUNT} \
   --placeholder_token=${PHRASE} \
   --initializer_token=${PHRASE_TOKEN} \
