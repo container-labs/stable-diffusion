@@ -4,7 +4,7 @@ import os
 from google.cloud import aiplatform
 
 parser = argparse.ArgumentParser()
-TRAINING_JOB = "job-1668492845"
+TRAINING_JOB = "job-1668585450"
 JOB_PATH = f"/gcs/md-ml/{TRAINING_JOB}/img_out"
 TRAIN_IMAGE = "us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/process:latest"
 # use smaller machines for inference
@@ -21,8 +21,8 @@ ACCELERATOR_COUNT = 1
 
 CMDARGS = [
     f"--model=/gcs/md-ml/{TRAINING_JOB}",
-    "--style=epaderod",
-    "--phrase=\"artistic portrait of Elon Musk, solid pastel background\"",
+    "--style=beebe",
+    "--phrase=\" solid pastel background\"",
     f"--output={JOB_PATH}",
     "--steps=100",
     "--number=20",

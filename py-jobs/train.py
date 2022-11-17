@@ -20,16 +20,16 @@ ACCELERATOR_COUNT = 1
 CMDARGS = [
     # TODO: upgrade this to use the new stable diffusion model
     "--model=CompVis/stable-diffusion-v1-4",
-    "--data=/gcs/md-ml/training-data",
+    "--data=/gcs/md-ml/training-data-faces/beebe",
     f"--output=/gcs/md-ml/{JOB_NAME}",
     # Higher training step values will lead to a more accurate representation of the concept
     "--steps=2000",
-    "--phrase=epaderod",
-    "--token=artwork",
+    "--phrase=beebe",
+    "--token=man",
     "--repeat=200",
     f"--batch={ACCELERATOR_COUNT}",
     "--learning=5.0e-06",
-    "--kind=style",
+    "--kind=object",
     #  seed will change the 'randomness' the diffusion model is using to construct the sample images to calculate the loss
     # TODO: expose seed as a hyperparameter to train
     #  change the train_batch_size if we are on a GPU with more than ~16GB of VRAM
