@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: calculation-pipeline-
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.14, pipelines.kubeflow.org/pipeline_compilation_time: '2022-11-16T17:21:28.535747',
+    pipelines.kubeflow.org/pipeline_spec: '{"description": "A toy pipeline that performs
+      arithmetic calculations.", "name": "Calculation pipeline"}'}
+  labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.14}
+spec:
+  entrypoint: calculation-pipeline
+  templates:
+  - name: calculation-pipeline
+    dag:
+      tasks:
+      - {name: customcontainertrainingjob-run, template: customcontainertrainingjob-run}
+  - name: customcontainertrainingjob-run
+    container:
+      args: [--init.display_name, inference-TRAINING_JOB, --init.container_uri, TRAIN_IMAGE,
+        --init.model_serving_container_image_uri, TRAIN_IMAGE, --executor_input, '{{$}}',
+        --resource_name_output_artifact_uri, '{{$.outputs.artifacts[''model''].uri}}',
+        --init.command, '["./process.sh"]']
+      command: [python3, -m, google_cloud_pipeline_components.container.aiplatform.remote_runner,
+        --cls_name, CustomContainerTrainingJob, --method_name, run]
+      image: gcr.io/ml-pipeline/google-cloud-pipeline-components:1.0.26
+    outputs:
+      artifacts:
+      - {name: customcontainertrainingjob-run-model, path: /tmp/outputs/model/data}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.14
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"implementation": {"container":
+          {"args": ["--init.display_name", "inference-TRAINING_JOB", "--init.container_uri",
+          "TRAIN_IMAGE", "--init.model_serving_container_image_uri", "TRAIN_IMAGE",
+          "--executor_input", "{{$}}", "--resource_name_output_artifact_uri", {"outputUri":
+          "model"}, "--init.command", {"inputValue": "command"}], "command": ["python3",
+          "-m", "google_cloud_pipeline_components.container.aiplatform.remote_runner",
+          "--cls_name", "CustomContainerTrainingJob", "--method_name", "run"], "image":
+          "gcr.io/ml-pipeline/google-cloud-pipeline-components:1.0.26"}}, "inputs":
+          [{"name": "command", "type": "String"}], "name": "CustomContainerTrainingJob-run",
+          "outputs": [{"name": "model", "type": "google.VertexModel"}]}', pipelines.kubeflow.org/component_ref: '{"digest":
+          "60dbc43a229b5d99f100f98ecd42b932871c3de2ac39fddc2809215daa86fe01", "url":
+          "/var/folders/h2/48chdshn5xl5k8mcs403xbzr0000gn/T/tmpeozhx0g8"}', pipelines.kubeflow.org/arguments.parameters: '{"command":
+          "[\"./process.sh\"]"}'}
+  arguments:
+    parameters: []
+  serviceAccountName: pipeline-runner

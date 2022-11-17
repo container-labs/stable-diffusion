@@ -1,0 +1,13 @@
+name: kubeflow
+channels:
+  - conda-forge
+  - pytorch
+  - nvidia
+  - defaults
+dependencies:
+  - python>=3.7.0
+  - pip>=22.2.0
+  - kfp=1.8.14
+  - google-cloud-aiplatform
+  - google-cloud-pipeline-components
+
