@@ -51,15 +51,19 @@ for i in "$@"; do
   esac
 done
 
-echo "Model Name  = ${MODEL_NAME}"
-echo "Data Dir    = ${DATA_DIR}"
-echo "Output Dir  = ${OUTPUT_DIR}"
-echo "DEFAULT     = ${DEFAULT}"
-echo "Max Steps   = ${MAX_STEPS}"
-echo "Phrase      = ${PHRASE}"
-echo "Phrase token     = ${PHRASE_TOKEN}"
 echo "Repeat trainng      = ${REPEAT_TRAINING_COUNT}"
 echo "Batch size     = ${BATCH_SIZE}"
+
+mkdir -p ${OUTPUT_DIR}
+echo "Model Name     = ${MODEL_NAME}" >> ${OUTPUT_DIR}/training.metadata
+echo "Data Dir       = ${DATA_DIR}" >> ${OUTPUT_DIR}/training.metadata
+echo "Output Dir     = ${OUTPUT_DIR}" >> ${OUTPUT_DIR}/training.metadata
+echo "Max Steps      = ${MAX_STEPS}" >> ${OUTPUT_DIR}/training.metadata
+echo "Phrase         = ${PHRASE}" >> ${OUTPUT_DIR}/training.metadata
+echo "Phrase token   = ${PHRASE_TOKEN}" >> ${OUTPUT_DIR}/training.metadata
+echo "Learning rate  = ${LEARNING_RATE}" >> ${OUTPUT_DIR}/training.metadata
+echo "Repeat trainng = ${REPEAT_TRAINING_COUNT}" >> ${OUTPUT_DIR}/training.metadata
+echo "Batch size     = ${BATCH_SIZE}" >> ${OUTPUT_DIR}/training.metadata
 
 python textual_inversion.py \
   --pretrained_model_name_or_path=${MODEL_NAME} \

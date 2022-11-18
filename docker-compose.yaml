@@ -135,6 +135,8 @@ services:
       - PROJECT_ID=md-wbeebe-0808-example-apps
       - REGION=us-central1
       - GCS_BUCKET=gs://md-ml
+    volumes:
+      - model_cache:/root/.cache/huggingface:delegated
   kflow:
     build:
       context: ./kflow
@@ -146,7 +148,8 @@ services:
       - REGION=us-central1
       - GCS_BUCKET=gs://md-ml
     volumes:
-      - ./image_dir:/os-shared:default
+      - ./creds.json:/creds.json
+      - ./kflow/components:/os-shared:default
 
   gcloud:
     image: google/cloud-sdk:latest
