@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stable-server
+  labels:
+    app: stable-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stable-server
+  template:
+    metadata:
+      labels:
+        app: stable-server
+    spec:
+      volumes:
+      - name: pvc-demo-vol
+        persistentVolumeClaim:
+          claimName: pvc-stable
+      containers:
+      - name: stable-server
+        image: us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/simple-server:1
+        ports:
+        - containerPort: 5000
+          name: service-port
+        volumeMounts:
+          - mountPath: "/root/.cache"
+            name: pvc-demo-vol
+        env:
+        - name: HUGGINGFACE_TOKEN
+          value: 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
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+          requests:
+            memory: 22Gi
+      nodeSelector:
+        cloud.google.com/gke-accelerator: nvidia-tesla-p100
+

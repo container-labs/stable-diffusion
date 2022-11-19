@@ -14,11 +14,10 @@ def hello_world():
     ).to("cuda")
     result = pipe(
         f"Two balloons in the sky",
-        10,
+        num_inference_steps=10,
         )
     image = result.images[0]
     image.save("test.png")
-
     return send_file("test.png", mimetype='image/png')
 
     # return "<p>Hello, World!</p>"
