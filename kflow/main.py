@@ -51,9 +51,9 @@ def calc_pipeline(
     #     model= f"/gcs/md-ml/job-{JOB_ID}",
     #     container_uri=INFER_IMAGE,
     # ).after(train_task)
-    gcc_aip.BatchPredictOp(
-        model=train_task.outputs['model'],
-    )
+    # gcc_aip.BatchPredictOp(
+    #     model=train_task.outputs['model'],
+    # )
 
     auto_infer_task = gcc_aip.CustomContainerTrainingJobRunOp(
         display_name=f"inference-{JOB_ID}",

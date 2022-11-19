@@ -20,6 +20,10 @@ spec:
       labels:
         {{- include "application.labels" . | nindent 8 }}
     spec:
+      volumes:
+      - name: cache-volume
+        persistentVolumeClaim:
+          claimName: pvc-stable
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -54,6 +58,9 @@ spec:
             - containerPort: {{ .Values.port }}
               protocol: TCP
           {{- end }}
+          volumeMounts:
+          - mountPath: "/root/.cache"
+            name: cache-volume
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}

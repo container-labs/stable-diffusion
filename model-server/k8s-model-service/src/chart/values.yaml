@@ -1,19 +1,20 @@
 image:
-  repository:
-  tag:
+  repository: us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/simple-server
+  tag: "1"
 
 command: []
 args: []
 
 envs: []
-port:
+port: 5000
 
 serviceAccount:
   annotations: {}
   name:
 
 resourceRequests: {}
-resourceLimits: {}
+resourceLimits:
+  nvidia.com/gpu: 1
 
 replicas:
   autoscalingEnabled: false
@@ -33,3 +34,7 @@ commonLabels: {}
 
 pod:
   annotations: {}
+
+# gke-specific
+nodeSelector:
+  cloud.google.com/gke-accelerator: nvidia-tesla-p100

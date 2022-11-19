@@ -1,76 +1,32 @@
 schema: draft-07
-name: k8s-model-service
-description: 
-source_url: github.com/YOUR_ORG/k8s-model-service
+name: k8s-stable-service
+description:
+source_url: github.com/YOUR_ORG/k8s-stable-service
 access: private
 type: application
 
 app:
   envs:
-    # Use jq expressions to build environment variables from input params or connections
-    LOG_LEVEL: .params.configuration.log_level
-    # MONGO_DSN: .connections.mongo_authentication.data.authentication.username + ":" + .connections.mongo_authentication.data.authentication.password + "@" + .connections.mongo_authentication.data.authentication.hostname + ":" + (.connections.mongo_authentication.data.authentication.port|tostring)
+    HUGGINGFACE_TOKEN: '@text "here"'
   policies: []
-    # Use jq expressions to select policies from artifact security blocks
-    # - .connections.sqs.data.security.iam.subscribe
 
 params:
   required:
-    - namespace
     - image
     - resourceRequests
     - replicas
     - ingress
   properties:
-    namespace:
-      title: Kubernetes Namespace
-      description: Application will be deployed into this namespace. If the namespace doesn't exist, it will be created.
-      $ref: https://raw.githubusercontent.com/massdriver-cloud/artifact-definitions/main/definitions/types/k8s-resource-name.json
-      default: default
     image:
       title: Container Image
       type: object
       required:
-      - repository
       - tag
       properties:
-        repository:
-          $md.immutable: true
-          title: Repository
-          # Massdriver automatically configures your Kubernetes clusters to have access to your cloud container repositories.
-          # Just set the full URI here or remove this field and hard code it in your values.yaml file.
-          description: Container repository to use for this application.
-          type: string
         tag:
           title: Image Tag
           $ref: https://raw.githubusercontent.com/massdriver-cloud/artifact-definitions/main/definitions/types/docker-image-tag.json
           default: latest
-    command:
-      title: Command
-      description: Command to execute as the entrypoint of the container. If left unspecified, the container default will be used (referred to as 'entrypoint' in some container runtimes, such as Docker). Formatted as an array of strings so that 'exec' form is used.
-      type: array
-      items:
-        type: string
-    args:
-      title: Arguments
-      description: Arguments to pass to the entrypoint command of the container. If left unspecified, the container default will be used (referred to as 'command' in some container runtimes, such as Docker). Formatted as an array of strings so that 'exec' form is used.
-      type: array
-      items:
-        type: string
-    additionalEnvs:
-      title: Environment Variables
-      description: "List of environment variables to set in the application runtime. Note: Environment variables from connections should be programmatically set in the application configuration file. See https://docs.massdriver.cloud/applications/getting-started#environment-variable-examples"
-      type: array
-      default: []
-      items:
-        type: object
-        properties:
-          name:
-            title: Name
-            type: string
-          value:
-            title: Value
-            type: string
     resourceRequests:
       title: Resources
       type: object
@@ -87,10 +43,6 @@ params:
           title: Memory
           description: The expected Memory resources required for this application.
           type: integer
-    port:
-      title: Port
-      description: The container port the application will listen on.
-      $ref: https://raw.githubusercontent.com/massdriver-cloud/artifact-definitions/main/definitions/types/port.json
     replicas:
       title: Replicas
       description: Manage the number of concurrent replicas of your application
@@ -202,11 +154,7 @@ connections:
 
 ui:
   ui:order:
-    - namespace
     - image
-    - command
-    - args
-    - additionalEnvs
     - resourceRequests
     - replicas
     - port
@@ -216,10 +164,6 @@ ui:
     memory:
       ui:field: conversionFieldData
       unit: Bytes
-  additionalEnvs:
-    ui:order:
-      - name
-      - value
   replicas:
     ui:order:
       - autoscalingEnabled

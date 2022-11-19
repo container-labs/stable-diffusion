@@ -124,6 +124,7 @@ services:
       - REGION=us-central1
       - GCS_BUCKET=gs://md-ml
   model-server:
+    platform: linux/amd64
     build:
       context: ./model-server
       dockerfile: Dockerfile
