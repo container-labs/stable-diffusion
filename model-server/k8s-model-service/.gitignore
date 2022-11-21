@@ -1,0 +1,7 @@
+.terraform
+schema-*.json
+*tfvars.json
+*_variables.tf.json
+*.tfstate
+*.tfstate.backup
+

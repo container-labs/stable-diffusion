@@ -1,5 +1,5 @@
 image:
-  repository: us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/simple-server
+  repository: us-central1-docker.pkg.dev/md-demos/stable-app/simple-server
   tag: "1"
 
 command: []

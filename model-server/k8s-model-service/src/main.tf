@@ -4,5 +4,4 @@ module "helm" {
   namespace          = "default"
   chart              = "${path.module}/chart"
   kubernetes_cluster = var.kubernetes_cluster
-  additional_envs    = var.additionalEnvs
 }
