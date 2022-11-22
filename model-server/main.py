@@ -1,8 +1,9 @@
 import os
+import uuid
 import threading
 
 from diffusers import StableDiffusionPipeline
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, jsonify
 
 app = Flask(__name__)
 sem = threading.Semaphore()
@@ -22,8 +23,14 @@ def hello_world():
     result = pipe(phrase, num_inference_steps=steps)
     sem.release()
     image = result.images[0]
-    image.save("test.png")
-    return send_file("test.png", mimetype='image/png')
+    unique_id = str(uuid.uuid4())
+    img_path = f"/mnt/md-ml/tmp-img-out/test-{unique_id}.png"
+    image.save(img_path)
+    data = {
+        "img": img_path
+    }
+    return jsonify(data)
+    # return send_file("test.png", mimetype='image/png')
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))

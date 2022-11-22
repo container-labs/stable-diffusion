@@ -19,8 +19,9 @@ spec:
         persistentVolumeClaim:
           claimName: pvc-stable
       containers:
+      # TODO: init container for custom model from gcs?
       - name: stable-server
-        image: us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/simple-server:1
+        image: us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/simple-server:2
         ports:
         - containerPort: 5000
           name: service-port
