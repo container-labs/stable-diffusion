@@ -1,0 +1,20 @@
+---
+name: Build, tag, push
+# The corresponding command for the workflow. Any arguments should be surrounded with two curly braces. E.g `command {{arg}}`.
+command: |-
+    docker-compose build model-server
+    docker tag stable-diffusion_model-server  us-central1-docker.pkg.dev/md-demos/stable-app/simple-server:{{tag}}
+    docker push us-central1-docker.pkg.dev/md-demos/stable-app/simple-server:{{tag}}
+# Any tags that the workflow should be categorized with.
+tags:
+  - homebrew
+# A description of the workflow.
+description: Uses the external command rmtree to remove a Homebrew package and all of its dependencies
+# List of arguments within the command.
+arguments:
+  - name: tag
+    description: The image tag
+    default_value: latest
+# The valid shells where this workflow should be active. If valid for all shells, this can be left empty.
+# See FORMAT.md for the full list of accepted values.
+shells: []

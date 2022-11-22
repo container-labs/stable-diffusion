@@ -24,7 +24,7 @@ def hello_world():
     sem.release()
     image = result.images[0]
     unique_id = str(uuid.uuid4())
-    img_path = f"/mnt/md-ml/tmp-img-out/test-{unique_id}.png"
+    img_path = f"/mnt/md-ml-public/test-{unique_id}.png"
     image.save(img_path)
     data = {
         "img": img_path
