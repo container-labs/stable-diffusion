@@ -78,6 +78,20 @@ spec:
             limits:
               {{- toYaml . | nindent 14 }}
             {{- end }}
+          securityContext:
+            privileged: true
+            capabilities:
+              add:
+                - SYS_ADMIN
+          lifecycle:
+            postStart:
+              exec:
+                command: ["gcsfuse", "-o", "nonempty", "md-ml", "/mnt/md-ml", "&&",
+                "gcsfuse", "-o", "nonempty", "md-ml-public", "/mnt/md-ml-public"]
+            preStop:
+              exec:
+                command: ["fusermount", "-u", "/mnt/ml-ml", "&&",
+                "fusermount", "-u", "/mnt/ml-ml-public"]
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

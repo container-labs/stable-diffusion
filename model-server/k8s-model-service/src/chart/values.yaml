@@ -1,6 +1,6 @@
 image:
   repository: us-central1-docker.pkg.dev/md-demos/stable-app/simple-server
-  tag: "1"
+  tag: "5"
 
 command: []
 args: []
@@ -37,4 +37,5 @@ pod:
 
 # gke-specific
 nodeSelector:
-  cloud.google.com/gke-accelerator: nvidia-tesla-p100
+  # cloud.google.com/gke-accelerator: nvidia-tesla-p100
+  cloud.google.com/gke-accelerator: nvidia-tesla-a100

@@ -1,20 +1,19 @@
 schema: draft-07
 name: k8s-stable-service
-description:
+description: A simple stable diffusion service.
 source_url: github.com/YOUR_ORG/k8s-stable-service
 access: private
 type: application
 
 app:
   envs:
-    HUGGINGFACE_TOKEN: '@text "here"'
+    HUGGINGFACE_TOKEN: '@text "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"'
   policies: []
 
 params:
   required:
     - image
-    - resourceRequests
-    - replicas
+    # - replicas
     - ingress
   properties:
     image:
@@ -27,74 +26,59 @@ params:
           title: Image Tag
           $ref: https://raw.githubusercontent.com/massdriver-cloud/artifact-definitions/main/definitions/types/docker-image-tag.json
           default: latest
-    resourceRequests:
-      title: Resources
-      type: object
-      required:
-        - cpu
-        - memory
-      properties:
-        cpu:
-          title: CPU Cores
-          description: The expected CPU cores required for this application. Fractional numbers are allowed (0.5 is one half of a CPU core).
-          type: number
-          minimum: 0.001
-        memory:
-          title: Memory
-          description: The expected Memory resources required for this application.
-          type: integer
-    replicas:
-      title: Replicas
-      description: Manage the number of concurrent replicas of your application
-      type: object
-      properties:
-        autoscalingEnabled:
-          title: Enable Horizontal Pod Autoscaling
-          description: A Horizontal Pod Autoscaler will enable your application to automatically add or remove replicas based on resource utilization.
-          type: boolean
-          default: false
-      dependencies:
-        autoscalingEnabled:
-          oneOf:
-          - properties:
-              autoscalingEnabled:
-                const: false
-              replicaCount:
-                title: Number of Replicas
-                description: Fixed number of replicas to constantly maintain
-                type: integer
-                minimum: 1
-                default: 1
-            required:
-            - replicaCount
-          - properties:
-              autoscalingEnabled:
-                const: true
-              minReplicas:
-                title: Minimum Replicas
-                description: Minimum number of replicas the autoscaler will maintain, based on target resource utilization
-                type: integer
-                minimum: 1
-                default: 1
-              maxReplicas:
-                title: Maximum Replicas
-                description: Maximum number of replicas the autoscaler will provision, based on target resource utilization
-                type: integer
-                minimum: 1
-                default: 10
-              targetCPUUtilizationPercentage:
-                title: Target CPU Utilization Percentage
-                description: The percentage of allocated CPU resources the autoscaler should target, based on the values specified in the 'Resources' section. If utilization rises sufficiently above this percentage, replicas will be added. If utilization drops sufficiently below this percentage, replicas will be removed.
-                type: integer
-                minimum: 1
-                default: 80
-            required:
-            - minReplicas
-            - maxReplicas
-            - targetCPUUtilizationPercentage
+    # TODO: simplify
+    # replicas:
+    #   title: Instance
+    #   description: Manage the number of concurrent replicas of your application
+    #   type: object
+    #   properties:
+    #     autoscalingEnabled:
+    #       title: Autoscaling
+    #       description: Enable horizontal autoscaling for your application.
+    #       type: boolean
+    #       default: false
+    #   dependencies:
+    #     autoscalingEnabled:
+    #       oneOf:
+    #       - properties:
+    #           autoscalingEnabled:
+    #             const: false
+    #           replicaCount:
+    #             title: Number of Replicas
+    #             description: Fixed number of replicas to constantly maintain
+    #             type: integer
+    #             minimum: 1
+    #             default: 1
+    #         required:
+    #         - replicaCount
+    #       - properties:
+    #           autoscalingEnabled:
+    #             const: true
+    #           minReplicas:
+    #             title: Minimum Replicas
+    #             description: Minimum number of replicas the autoscaler will maintain, based on target resource utilization
+    #             type: integer
+    #             minimum: 1
+    #             default: 1
+    #           maxReplicas:
+    #             title: Maximum Replicas
+    #             description: Maximum number of replicas the autoscaler will provision, based on target resource utilization
+    #             type: integer
+    #             minimum: 1
+    #             default: 10
+    #           targetCPUUtilizationPercentage:
+    #             title: Target CPU Utilization Percentage
+    #             description: The percentage of allocated CPU resources the autoscaler should target, based on the values specified in the 'Resources' section. If utilization rises sufficiently above this percentage, replicas will be added. If utilization drops sufficiently below this percentage, replicas will be removed.
+    #             type: integer
+    #             minimum: 1
+    #             default: 80
+    #         required:
+    #         - minReplicas
+    #         - maxReplicas
+    #         - targetCPUUtilizationPercentage
     ingress:
-      title: Ingress
-      description: Configure the application for public internet accessibility
+      title: Endpoint
+      # description: Configure the application for public internet accessibility
       type: object
       properties:
         enabled:
@@ -111,23 +95,23 @@ params:
               enabled:
                 const: true
               host:
-                title: HTTP Hostname
-                description: The hostname which this application should be accessable on, such as www.example.com. You must own this domain and have it associated with this kubernetes cluster if you would like automatic DNS record and SSL certificate management.
+                title: URL
+                # description: The hostname which this application should be accessable on, such as www.example.com. You must own this domain and have it associated with this kubernetes cluster if you would like automatic DNS record and SSL certificate management.
                 type: string
                 pattern: ^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$
                 message:
                   pattern: Hostname should consist of letters, numbers, periods and hyphens, such as www.example.com
-              path:
-                title: HTTP Path
-                description: The HTTP path which, when appended to the host above, this application will serve traffic on
-                type: string
-                default: "/"
-                pattern: ^\/.*$
-                message:
-                  pattern: Must begin with a '/' and be a valid HTTP endpoint
+              # path:
+              #   title: HTTP Path
+              #   description: The HTTP path which, when appended to the host above, this application will serve traffic on
+              #   type: string
+              #   default: "/"
+              #   pattern: ^\/.*$
+              #   message:
+              #     pattern: Must begin with a '/' and be a valid HTTP endpoint
             required:
             - host
-            - path
+            # - path
     # Uncomment the section below to begin adding any application-specific configuration that is appropriate. See the app.envs section above for how to set environment values from these settings.
     # configuration:
     #   title: Configuration
@@ -155,26 +139,20 @@ connections:
 ui:
   ui:order:
     - image
-    - resourceRequests
-    - replicas
-    - port
+    # - replicas
     - ingress
     - "*"
-  resourceRequests:
-    memory:
-      ui:field: conversionFieldData
-      unit: Bytes
-  replicas:
-    ui:order:
-      - autoscalingEnabled
-      - replicaCount
-      - minReplicas
-      - maxReplicas
-      - targetCPUUtilizationPercentage
-      - "*"
+  # replicas:
+  #   ui:order:
+  #     - autoscalingEnabled
+  #     - replicaCount
+  #     - minReplicas
+  #     - maxReplicas
+  #     - targetCPUUtilizationPercentage
+  #     - "*"
   ingress:
     ui:order:
       - enabled
       - host
-      - path
+      # - path
       - "*"
