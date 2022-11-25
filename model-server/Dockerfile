@@ -1,10 +1,8 @@
 FROM gcr.io/deeplearning-platform-release/pytorch-gpu
 
-RUN pip install Flask
-RUN pip install diffusers
-RUN pip install transformers
-RUN pip install accelerate
-RUN pip install flask-cors
+RUN pip install \
+  Flask flask-cors \
+  diffusers transformers accelerate
 
 RUN apt-get install -y gcsfuse
 
