@@ -86,8 +86,8 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["gcsfuse", "-o", "nonempty", "md-ml", "/mnt/md-ml", "&&",
-                "gcsfuse", "-o", "nonempty", "md-ml-public", "/mnt/md-ml-public"]
+                command: ["gcsfuse", "md-ml", "/mnt/md-ml", "&&",
+                "gcsfuse", "md-ml-public", "/mnt/md-ml-public"]
             preStop:
               exec:
                 command: ["fusermount", "-u", "/mnt/ml-ml", "&&",

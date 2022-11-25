@@ -4,11 +4,14 @@ import threading
 
 from diffusers import StableDiffusionPipeline
 from flask import Flask, request, send_file, jsonify
+from flask_cors import cross_origin
 
 app = Flask(__name__)
+#CORS(app, resources={r"*": {"origins": "https://stable-app-7x3ry9.flutterflow.app/"}})
 sem = threading.Semaphore()
 
 @app.route("/")
+@cross_origin()
 def hello_world():
     args = request.args
     phrase = args.get("phrase", "a unicorn playing a rainbow guitar")
@@ -25,12 +28,12 @@ def hello_world():
     image = result.images[0]
     unique_id = str(uuid.uuid4())
     img_path = f"/mnt/md-ml-public/test-{unique_id}.png"
+    url_path = f"https://storage.googleapis.com/md-ml-public/test-{unique_id}.png"
     image.save(img_path)
     data = {
-        "img": img_path
+        "img": url_path
     }
     return jsonify(data)
-    # return send_file("test.png", mimetype='image/png')
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))

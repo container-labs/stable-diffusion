@@ -4,6 +4,7 @@ RUN pip install Flask
 RUN pip install diffusers
 RUN pip install transformers
 RUN pip install accelerate
+RUN pip install flask-cors
 
 RUN apt-get install -y gcsfuse
 
