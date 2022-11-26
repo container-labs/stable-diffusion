@@ -15,7 +15,7 @@ steps:
   waitFor: ['-']
 - name: gcr.io/cloud-builders/docker
   args: ['build', '-t', 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/server', './model-server']
-  waitFor: ['process']
+  waitFor: ['-']
 # kaniko testing
 # - name: 'gcr.io/kaniko-project/executor:latest'
 #   waitFor: ['-']
