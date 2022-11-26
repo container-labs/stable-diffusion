@@ -5,7 +5,6 @@ RUN pip install \
   diffusers transformers accelerate
 
 RUN apt-get install -y gcsfuse
-
 RUN mkdir -p /mnt/md-ml
 RUN mkdir -p /mnt/md-ml-public
 
