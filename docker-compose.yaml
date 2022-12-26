@@ -78,7 +78,7 @@ services:
   train:
     build:
       context: ./py-jobs
-    command: python train.py
+    command: python train2.py
     environment:
       - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
       - GOOGLE_APPLICATION_CREDENTIALS=creds.json
@@ -159,20 +159,11 @@ services:
       - ./gcloud-vol:/root/gcloud-vol
     command: >
       bash -c "
-      mkdir -p /root/gcloud-vol/job-1668492845 &&
+      mkdir -p /root/gcloud-vol/jpl &&
       gcloud auth activate-service-account --key-file=/creds.json &&
       gcloud config set project md-wbeebe-0808-example-apps &&
       gsutil ls gs://md-ml &&
       gsutil -m cp -r \
-        "gs://md-ml/job-1668492845/feature_extractor" \
-        "gs://md-ml/job-1668492845/img_out" \
-        "gs://md-ml/job-1668492845/learned_embeds.bin" \
-        "gs://md-ml/job-1668492845/model_index.json" \
-        "gs://md-ml/job-1668492845/safety_checker" \
-        "gs://md-ml/job-1668492845/scheduler" \
-        "gs://md-ml/job-1668492845/text_encoder" \
-        "gs://md-ml/job-1668492845/tokenizer" \
-        "gs://md-ml/job-1668492845/unet" \
-        "gs://md-ml/job-1668492845/vae" \
-        /root/gcloud-vol/job-1668492845
+        "gs://md-ml/training-data-styles/jpl" \
+        /root/gcloud-vol/jpl
       "
