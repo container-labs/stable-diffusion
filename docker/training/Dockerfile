@@ -2,6 +2,8 @@
 ARG BASE_IMAGE=us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training-base
 FROM ${BASE_IMAGE}:latest
 
+RUN pip install cloudml-hypertune
+
 COPY . .
 RUN pwd
 RUN ls -al

@@ -6,6 +6,7 @@ import random
 from pathlib import Path
 from typing import Optional
 
+import hypertune
 import numpy as np
 import PIL
 import torch
@@ -26,6 +27,7 @@ from tqdm.auto import tqdm
 from transformers import CLIPFeatureExtractor, CLIPTextModel, CLIPTokenizer
 
 logger = get_logger(__name__)
+hpt = hypertune.HyperTune()
 
 def save_progress(text_encoder, placeholder_token_id, accelerator, args):
     logger.info("Saving embeddings")
