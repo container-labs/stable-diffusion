@@ -29,6 +29,9 @@ from transformers import CLIPFeatureExtractor, CLIPTextModel, CLIPTokenizer
 logger = get_logger(__name__)
 hpt = hypertune.HyperTune()
 
+# SD_MODEL= "stabilityai/stable-diffusion-2-1"
+SD_MODEL= os.getenv('SD_MODEL', "CompVis/stable-diffusion-v1-4")
+
 def save_progress(text_encoder, placeholder_token_id, accelerator, args):
     logger.info("Saving embeddings")
     learned_embeds = accelerator.unwrap_model(text_encoder).get_input_embeddings().weight[placeholder_token_id]
@@ -419,7 +422,7 @@ def main():
         eps=args.adam_epsilon,
     )
 
-    noise_scheduler = DDPMScheduler.from_config("CompVis/stable-diffusion-v1-4", subfolder="scheduler",  use_auth_token=os.getenv('HUGGINGFACE_TOKEN'))
+    noise_scheduler = DDPMScheduler.from_config(SD_MODEL, subfolder="scheduler",  use_auth_token=os.getenv('HUGGINGFACE_TOKEN'))
 
     train_dataset = TextualInversionDataset(
         data_root=args.train_data_dir,
@@ -554,7 +557,7 @@ def main():
             vae=vae,
             unet=unet,
             tokenizer=tokenizer,
-            scheduler=PNDMScheduler.from_config("CompVis/stable-diffusion-v1-4", subfolder="scheduler", use_auth_token=os.getenv('HUGGINGFACE_TOKEN')),
+            scheduler=PNDMScheduler.from_config(SD_MODEL, subfolder="scheduler", use_auth_token=os.getenv('HUGGINGFACE_TOKEN')),
             safety_checker=StableDiffusionSafetyChecker.from_pretrained("CompVis/stable-diffusion-safety-checker", use_auth_token=os.getenv('HUGGINGFACE_TOKEN')),
             feature_extractor=CLIPFeatureExtractor.from_pretrained("openai/clip-vit-base-patch32", use_auth_token=os.getenv('HUGGINGFACE_TOKEN')),
         )

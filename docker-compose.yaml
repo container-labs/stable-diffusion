@@ -67,6 +67,19 @@ services:
         - BASE_IMAGE=stable-diffusion_training-base
       # entrypoint:
       #   - ./train-style.sh
+    entrypoint: ./train.sh
+    command:
+      - --model=stabilityai/stable-diffusion-2-1
+      - --data=/gcs/md-ml/training-data-styles/jpl-512
+      - --output=/image_dir
+      - --steps=50
+      - --phrase=dopeaf
+      - --repeat=100
+      - --batch=10
+      - --token=poster
+      - --learning=0.01
+      - --kind=style
+
     environment:
       - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
     volumes:

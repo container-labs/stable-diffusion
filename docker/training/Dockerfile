@@ -2,11 +2,13 @@
 ARG BASE_IMAGE=us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training-base
 FROM ${BASE_IMAGE}:latest
 
-RUN pip install cloudml-hypertune
+RUN eval "$(conda shell.bash hook)" && conda activate training && \
+    pip install cloudml-hypertune
 
 COPY . .
+
 RUN pwd
 RUN ls -al
 
-CMD ["./train-style.sh", "--output=output", "--model=CompVis/stable-diffusion-v1-4", "--data=/image_dir"]
+CMD ["./train.sh", "--output=output", "--model=CompVis/stable-diffusion-v1-4", "--data=/image_dir"]
 # CMD ["tail", "-f", "/dev/null"]

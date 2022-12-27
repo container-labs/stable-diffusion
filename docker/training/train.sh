@@ -4,6 +4,8 @@
 # "gs://md-ml"
 # /gcs/md-ml/model_out
 
+set +ex
+
 # conda init bash
 eval "$(conda shell.bash hook)"
 conda activate training
@@ -70,6 +72,7 @@ echo "Phrase token   = ${PHRASE_TOKEN}" >> ${OUTPUT_DIR}/training.metadata
 echo "Learning rate  = ${LEARNING_RATE}" >> ${OUTPUT_DIR}/training.metadata
 echo "Repeat trainng = ${REPEAT_TRAINING_COUNT}" >> ${OUTPUT_DIR}/training.metadata
 echo "Batch size     = ${BATCH_SIZE}" >> ${OUTPUT_DIR}/training.metadata
+cat ${OUTPUT_DIR}/training.metadata
 
 python textual_inversion.py \
   --pretrained_model_name_or_path=${MODEL_NAME} \
