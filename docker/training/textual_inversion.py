@@ -29,8 +29,9 @@ from transformers import CLIPFeatureExtractor, CLIPTextModel, CLIPTokenizer
 logger = get_logger(__name__)
 hpt = hypertune.HyperTune()
 
+# CompVis/stable-diffusion-v1-4
 # SD_MODEL= "stabilityai/stable-diffusion-2-1"
-SD_MODEL= os.getenv('SD_MODEL', "CompVis/stable-diffusion-v1-4")
+SD_MODEL= os.getenv('SD_MODEL', "stabilityai/stable-diffusion-2-1")
 
 def save_progress(text_encoder, placeholder_token_id, accelerator, args):
     logger.info("Saving embeddings")
