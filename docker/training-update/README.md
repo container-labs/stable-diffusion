@@ -1,0 +1,6 @@
+
+
+
+
+conda activate base-osx
+
