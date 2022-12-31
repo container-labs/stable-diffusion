@@ -10,6 +10,9 @@ steps:
 - name: gcr.io/cloud-builders/docker
   args: ['build', '-t', 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training', './docker/training']
 - name: gcr.io/cloud-builders/docker
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training-update', './docker/training-update']
+  waitFor: ['-']
+- name: gcr.io/cloud-builders/docker
   id: process
   args: ['build', '-t', 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/process', './docker/process']
   waitFor: ['-']
@@ -39,6 +42,7 @@ images:
 # - 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/cuda/notebook'
 # - 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/base'
 - 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training'
+- 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training-update'
 - 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/process'
 - 'us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/server'
 
