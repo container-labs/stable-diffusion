@@ -44,11 +44,16 @@ for i in "$@"; do
       PHRASE_TOKEN="${i#*=}"
       shift # past argument=value
       ;;
+          ;;
+    -q=*|--resolution=*)
+      RESOLUTION="${i#*=}"
+      shift # past argument=value
+      ;;
     -l=*|--learning=*)
       LEARNING_RATE="${i#*=}"
       shift # past argument=value
       ;;
-    -m=*|--mixed=*)
+    -w=*|--mixed=*)
       MIXED_PRECISION="${i#*=}"
       shift # past argument=value
       ;;
@@ -73,6 +78,7 @@ echo "Output Dir      = ${OUTPUT_DIR}" >> ${OUTPUT_DIR}/training.metadata
 echo "Max Steps       = ${MAX_STEPS}" >> ${OUTPUT_DIR}/training.metadata
 echo "Phrase          = ${PHRASE}" >> ${OUTPUT_DIR}/training.metadata
 echo "Phrase token    = ${PHRASE_TOKEN}" >> ${OUTPUT_DIR}/training.metadata
+echo "Resolution      = ${RESOLUTION}" >> ${OUTPUT_DIR}/training.metadata
 echo "Learning rate   = ${LEARNING_RATE}" >> ${OUTPUT_DIR}/training.metadata
 echo "Mixed precision = ${MIXED_PRECISION}" >> ${OUTPUT_DIR}/training.metadata
 echo "Repeat trainng  = ${REPEAT_TRAINING_COUNT}" >> ${OUTPUT_DIR}/training.metadata
@@ -86,7 +92,7 @@ python textual_inversion.py \
   --repeats=${REPEAT_TRAINING_COUNT} \
   --placeholder_token=${PHRASE} \
   --initializer_token=${PHRASE_TOKEN} \
-  --resolution=512 \
+  --resolution=${RESOLUTION} \
   --train_batch_size=${BATCH_SIZE} \
   --max_train_steps=${MAX_STEPS} \
   --learning_rate=${LEARNING_RATE} \
