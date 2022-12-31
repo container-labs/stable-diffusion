@@ -86,6 +86,7 @@ python textual_inversion.py \
   --max_train_steps=${MAX_STEPS} \
   --learning_rate=${LEARNING_RATE} \
   --scale_lr \
+  --mixed_precision=bf16 \
   --output_dir=${OUTPUT_DIR}
 
 
