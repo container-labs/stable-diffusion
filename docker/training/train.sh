@@ -44,7 +44,6 @@ for i in "$@"; do
       PHRASE_TOKEN="${i#*=}"
       shift # past argument=value
       ;;
-          ;;
     -q=*|--resolution=*)
       RESOLUTION="${i#*=}"
       shift # past argument=value
