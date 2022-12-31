@@ -48,6 +48,10 @@ for i in "$@"; do
       LEARNING_RATE="${i#*=}"
       shift # past argument=value
       ;;
+    -m=*|--mixed=*)
+      MIXED_PRECISION="${i#*=}"
+      shift # past argument=value
+      ;;
     -k=*|--kind=*)
       LEARNABLE_PROP="${i#*=}"
       shift # past argument=value
@@ -62,16 +66,17 @@ for i in "$@"; do
 done
 
 mkdir -p ${OUTPUT_DIR}
-echo "Model Name     = ${MODEL_NAME}" >> ${OUTPUT_DIR}/training.metadata
-echo "Data Dir       = ${DATA_DIR}" >> ${OUTPUT_DIR}/training.metadata
-echo "Learnable prop = ${LEARNABLE_PROP}" >> ${OUTPUT_DIR}/training.metadata
-echo "Output Dir     = ${OUTPUT_DIR}" >> ${OUTPUT_DIR}/training.metadata
-echo "Max Steps      = ${MAX_STEPS}" >> ${OUTPUT_DIR}/training.metadata
-echo "Phrase         = ${PHRASE}" >> ${OUTPUT_DIR}/training.metadata
-echo "Phrase token   = ${PHRASE_TOKEN}" >> ${OUTPUT_DIR}/training.metadata
-echo "Learning rate  = ${LEARNING_RATE}" >> ${OUTPUT_DIR}/training.metadata
-echo "Repeat trainng = ${REPEAT_TRAINING_COUNT}" >> ${OUTPUT_DIR}/training.metadata
-echo "Batch size     = ${BATCH_SIZE}" >> ${OUTPUT_DIR}/training.metadata
+echo "Model Name      = ${MODEL_NAME}" >> ${OUTPUT_DIR}/training.metadata
+echo "Data Dir        = ${DATA_DIR}" >> ${OUTPUT_DIR}/training.metadata
+echo "Learnable prop  = ${LEARNABLE_PROP}" >> ${OUTPUT_DIR}/training.metadata
+echo "Output Dir      = ${OUTPUT_DIR}" >> ${OUTPUT_DIR}/training.metadata
+echo "Max Steps       = ${MAX_STEPS}" >> ${OUTPUT_DIR}/training.metadata
+echo "Phrase          = ${PHRASE}" >> ${OUTPUT_DIR}/training.metadata
+echo "Phrase token    = ${PHRASE_TOKEN}" >> ${OUTPUT_DIR}/training.metadata
+echo "Learning rate   = ${LEARNING_RATE}" >> ${OUTPUT_DIR}/training.metadata
+echo "Mixed precision = ${MIXED_PRECISION}" >> ${OUTPUT_DIR}/training.metadata
+echo "Repeat trainng  = ${REPEAT_TRAINING_COUNT}" >> ${OUTPUT_DIR}/training.metadata
+echo "Batch size      = ${BATCH_SIZE}" >> ${OUTPUT_DIR}/training.metadata
 cat ${OUTPUT_DIR}/training.metadata
 
 python textual_inversion.py \
@@ -86,7 +91,7 @@ python textual_inversion.py \
   --max_train_steps=${MAX_STEPS} \
   --learning_rate=${LEARNING_RATE} \
   --scale_lr \
-  --mixed_precision=bf16 \
+  --mixed_precision=${MIXED_PRECISION} \
   --output_dir=${OUTPUT_DIR}
 
 
