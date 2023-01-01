@@ -5,81 +5,91 @@ import time
 from google.cloud import aiplatform
 
 parser = argparse.ArgumentParser()
-JOB_NAME = "training-job-{}".format(int(time.time()))
 TRAIN_IMAGE = "us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training:latest"
-MACHINE_TYPE_TRAINING = "n1-highmem-16"
-ACCELERATOR_TYPE_TRAINING = "NVIDIA_TESLA_P100"
-# Training doesn't use more than 1 GPU with our config
-ACCELERATOR_COUNT = 1
+MODEL_SERVER_IMAGE = "us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/simple-server:latest"
 
-# learning rates
-# "low" 2e-6
-# "high" 5e-6
-# initial - 5e-4
+model_config = {
+    "jpl": {
+        "name": "jpl",
+        "phrase": "dopeaf",
+        "token": "poster",
+        "kind": "style"
+    },
+    "alan": {
+        "name": "alan",
+        "phrase": "massjimmy",
+        "token": "artwork",
+        "kind": "style"
+    }
+}
 
-#  "--model=CompVis/stable-diffusion-v1-4",
-#     "--data=/gcs/md-ml/training-data-faces/beebe",
-#     f"--output=/gcs/md-ml/faces-out{JOB_NAME}",
-#     "--steps=2000",
-#     "--phrase=beebz",
-#     "--token=man",
-#     "--repeat=200",
-#     f"--batch={ACCELERATOR_COUNT}",
-#     "--learning=2.0e-04",
-#     "--kind=object",
+machine_config = {
+    "a2-highgpu-1g": {
+        "batch": 4,
+        "mixed": "bf16",
+        "accelerator_type": "NVIDIA_TESLA_A100"
+    }
+}
 
+job_config = {
+    "name": "training-job-{}".format(int(time.time())),
+    "base_model": "runwayml/stable-diffusion-v1-5",
+    "model": "jpl",
+    "machine": "a2-highgpu-1g",
+    "resolution": 512,
+    "accelerator_count": 1,
+    "steps": 500,
+    "learning_rate": "1.0e-04"
+}
+job_config['model_config'] = model_config[job_config['model']]
+job_config['machine_config'] = machine_config[job_config['machine']]
 
-    # "--model=CompVis/stable-diffusion-v1-4",
-    # "--data=/gcs/md-ml/training-data-styles/jpl",
-    # f"--output=/gcs/md-ml/styles-out{JOB_NAME}",
-    # # https://huggingface.co/blog/dreambooth#:~:text=In%20our%20experiments%2C%20a%20learning,learning%20rate%20is%20too%20high.
-    # "--steps=1000",
-    # "--phrase=dopeaf",
-    # "--token=poster",
-    # "--repeat=100",
-    # f"--batch={ACCELERATOR_COUNT}",
-    # "--learning=2.0e-06",
-    # "--kind=style",
+print(job_config)
 
 CMDARGS = [
-    # TODO: upgrade this to use the new stable diffusion model
-    "--model=CompVis/stable-diffusion-v1-4",
-    "--data=/gcs/md-ml/training-data-styles/jpl",
-    f"--output=/gcs/md-ml/{JOB_NAME}",
-    # https://huggingface.co/blog/dreambooth#:~:text=In%20our%20experiments%2C%20a%20learning,learning%20rate%20is%20too%20high.
-    "--steps=2000",
-    "--phrase=dopeaf",
-    "--token=poster",
-    "--repeat=100",
-    f"--batch={ACCELERATOR_COUNT}",
-    "--learning=2.0e-04",
-    "--kind=style",
+    f"--model={job_config['base_model']}",
+    f"--resolution={job_config['resolution']}",
 
-    #  seed will change the 'randomness' the diffusion model is using to construct the sample images to calculate the loss
-    # TODO: expose seed as a hyperparameter to train
-    #  change the train_batch_size if we are on a GPU with more than ~16GB of VRAM
-    # TODO: explore batch size
+    # 'model' args
+    f"--data=/gcs/md-ml/training-data-styles/{job_config['model_config']['name']}",
+    f"--phrase={job_config['model_config']['phrase']}",
+    f"--token={job_config['model_config']['token']}",
+    f"--kind={job_config['model_config']['kind']}",
+
+    # tuneable params
+    "--repeat=100",
+    f"--learning={job_config['learning_rate']}",
+    f"--steps={job_config['steps']}",
+
+    # 'job' args
+    f"--batch={job_config['machine_config']['batch']}",
+    f"--mixed={job_config['machine_config']['mixed']}",
+    f"--output=/gcs/md-ml/{job_config['name']}/model",
 ]
 
 aiplatform.init(project=os.getenv('GOOGLE_CLOUD_PROJECT'), location=os.getenv('REGION'), staging_bucket=os.getenv('GCS_BUCKET'))
 
 job = aiplatform.CustomContainerTrainingJob(
-        display_name=JOB_NAME,
+        display_name=job_config["name"],
         container_uri=TRAIN_IMAGE,
         command=["./train.sh"],
-        model_serving_container_image_uri=TRAIN_IMAGE
+        model_serving_container_image_uri=MODEL_SERVER_IMAGE,
+        model_serving_container_ports=[5000],
+        model_serving_container_predict_route="/predict",
+        model_serving_container_health_route="/health",
+        # model_serving_container_command=["./serve.sh"],
     )
 
 # https://cloud.google.com/python/docs/reference/aiplatform/latest/google.cloud.aiplatform.CustomContainerTrainingJob#google_cloud_aiplatform_CustomContainerTrainingJob_run
 job.run(
-    model_display_name="will_beebe",
+    model_display_name=job_config['model_config']['name'],
     args=CMDARGS,
     replica_count=1,
-    machine_type=MACHINE_TYPE_TRAINING,
-    accelerator_type=ACCELERATOR_TYPE_TRAINING,
-    accelerator_count=ACCELERATOR_COUNT,
+    machine_type=job_config['machine'],
+    accelerator_type=job_config['machine_config']['accelerator_type'],
+    accelerator_count=job_config["accelerator_count"],
     environment_variables={
       'HUGGINGFACE_TOKEN': os.getenv('HUGGINGFACE_TOKEN')
     },
-    base_output_dir=f"gs://md-ml/{JOB_NAME}",
+    base_output_dir=f"gs://md-ml/{job_config['name']}",
 )

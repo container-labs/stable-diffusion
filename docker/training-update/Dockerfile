@@ -5,6 +5,8 @@ FROM ${BASE_IMAGE}:latest
 RUN eval "$(conda shell.bash hook)" && conda activate training && \
     pip install cloudml-hypertune
 
+RUN eval "$(conda shell.bash hook)" && conda activate training && conda update --all
+
 COPY . .
 
 RUN pwd

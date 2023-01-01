@@ -5,4 +5,4 @@ RUN pip install google-cloud-pubsub
 
 COPY . .
 
-CMD ["python", "main.py"]
+CMD ["python", "train.py"]

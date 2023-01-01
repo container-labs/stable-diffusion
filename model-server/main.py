@@ -1,10 +1,12 @@
 import os
+import random
 import threading
 import uuid
 
 from diffusers import StableDiffusionPipeline
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS, cross_origin
+from torch import Generator
 
 model_trigger_map = {
     "DGSpitzer/Cyberpunk-Anime-Diffusion": "cyberpunk style",
@@ -27,22 +29,19 @@ model_trigger_map = {
 # https://flask-cors.readthedocs.io/en/v1.1/#options
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5000", "https://stable.gcp-gcp-gcp.com"])
-app.config['CORS_HEADERS'] = 'Content-Type'
+# CORS(app, origins=["http://localhost:5000", "https://stable.gcp-gcp-gcp.com"])
+# app.config['CORS_HEADERS'] = 'Content-Type'
 sem = threading.Semaphore()
 
 @app.route("/health")
-@cross_origin()
 def health_check():
     return jsonify({ "healthy":true })
 
 @app.route("/", methods=['OPTIONS'])
-@cross_origin(methods=['OPTIONS'])
 def preflight_options():
     return jsonify({ "healthy":true })
 
 @app.route("/", methods=['POST', 'PUT'])
-@cross_origin(methods=['POST', 'PUT'])
 def hello_world():
     body = request.json
     phrase = body.get("phrase", "a unicorn playing a rainbow guitar")
@@ -51,19 +50,31 @@ def hello_world():
     if steps > 500:
         return jsonify({"error": "Steps must be less than 500"})
     guidance_scale  = float(body.get("guidance_scale", 8.5))
+    height = int(body.get("height", 512))
+    width = int(body.get("width", 512))
+    # what's the effective range of SD seeds
+    random_seed = random.randint(0, 5000)
+    seed = int(body.get("seed", random_seed))
     style_trigger = model_trigger_map.get(model, "")
     phrase = f"{style_trigger} {phrase}"
     sem.acquire()
-    print(f"phrase: {phrase}\nmodel: {model}\nsteps: {steps}\nguidance_scale: {guidance_scale}")
+    print(f"phrase: {phrase}\nmodel: {model}\nsteps: {steps}\nguidance_scale: {guidance_scale}\nseed: {seed}")
+    generator = Generator().manual_seed(seed)
     pipe = StableDiffusionPipeline.from_pretrained(
       model,
-      use_auth_token=os.getenv('HUGGINGFACE_TOKEN')
+      use_auth_token=os.getenv('HUGGINGFACE_TOKEN'),
+      generator=generator
     ).to("cuda")
-    result = pipe(phrase, num_inference_steps=steps)
+    result = pipe(phrase,
+        num_inference_steps=steps,
+        guidance_scale=guidance_scale,
+        height=height,
+        width=width,
+    )
     sem.release()
     image = result.images[0]
     unique_id = str(uuid.uuid4())
-    img_path = f"/root/.cache/test-{unique_id}.png"
+    img_path = f"/mnt/md-ml-public/test-out/{hash(model)}-{unique_id}-{seed}.png"
     url_path = f"https://storage.googleapis.com/md-ml-public/test-{unique_id}.png"
     image.save(img_path)
     data = {
@@ -72,7 +83,6 @@ def hello_world():
     return jsonify(data)
 
 @app.route("/predict", methods=['POST'])
-@cross_origin(methods=['POST'])
 def predict():
     body = request.json
     instances = body.get("instances", [])
