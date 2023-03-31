@@ -7,109 +7,74 @@ from kfp.v2 import compiler, dsl
 
 # https://github.com/kubeflow/examples/blob/master/pipelines/simple-notebook-pipeline/Simple%20Notebook%20Pipeline.ipynb
 
-JOB_ID = "{}".format(int(time.time()))
+JOB_NAME = "kflow-job-{}".format(int(time.time()))
 TRAIN_IMAGE = "us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/training:latest"
-INFER_IMAGE = "us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/process:latest"
+MODEL_SERVER_IMAGE = "us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/simple-server:latest"
+MACHINE_TYPE_TRAINING = "a2-highgpu-1g"
+ACCELERATOR_TYPE_TRAINING = "NVIDIA_TESLA_A100"
+# Training doesn't use more than 1 GPU with our config
+ACCELERATOR_COUNT = 1
+MODEL_NAME="jpl_512_dopeaf_5"
 
 # train_component = components.load_component_from_file('./components/train.yaml')
 # auto_infer_component = components.load_component_from_file('./components/auto_infer.yaml')
 
+CMDARGS = [
+    # TODO: upgrade this to use the new stable diffusion model
+    # "--model=CompVis/stable-diffusion-v1-4",
+    "--model=runwayml/stable-diffusion-v1-5",
+    "--data=/gcs/md-ml/training-data-styles/jpl-512",
+    f"--output=/gcs/md-ml/{JOB_NAME}/model",
+    # https://huggingface.co/blog/dreambooth#:~:text=In%20our%20experiments%2C%20a%20learning,learning%20rate%20is%20too%20high.
+    "--steps=1500",
+    "--phrase=dopeaf",
+    "--token=poster",
+    "--repeat=100",
+    f"--batch={ACCELERATOR_COUNT}",
+    "--learning=5.0e-06",
+    "--kind=style",
+]
+
 @dsl.pipeline(
    name='stable-diffusion',
-   description='A pipeline'
+   description='A pipeline',
+   pipeline_root=f"gs://md-ml/{JOB_NAME}"
 )
-def calc_pipeline(
+def add_pipeline(
 ):
     train_task = gcc_aip.CustomContainerTrainingJobRunOp(
-        display_name=f"training-{JOB_ID}",
+        display_name=JOB_NAME,
         container_uri=TRAIN_IMAGE,
         command=[
             "./train.sh",
-            "--model=CompVis/stable-diffusion-v1-4",
-            "--data=/gcs/md-ml/training-data",
-            f"--output=/gcs/md-ml/job-{JOB_ID}/model",
-            "--steps=100",
-            "--phrase=epaderod",
-            "--token=artwork",
-            "--repeat=100",
-            f"--batch=1",
-            "--learning=2.0e-06",
-            "--kind=style",
         ],
+        args=CMDARGS,
         staging_bucket="gs://md-ml",
-        model_serving_container_image_uri=TRAIN_IMAGE,
-        machine_type="n1-highmem-16",
-        accelerator_type="NVIDIA_TESLA_P100",
-        # base_output_dir=f"/gcs/md-ml/job-{JOB_ID}/output",
-        # base_output_dir=f"job-{JOB_ID}",
+        model_serving_container_image_uri=MODEL_SERVER_IMAGE,
+        machine_type=MACHINE_TYPE_TRAINING,
+        accelerator_type=ACCELERATOR_TYPE_TRAINING,
         environment_variables={
             'HUGGINGFACE_TOKEN': os.getenv('HUGGINGFACE_TOKEN')
         },
+        base_output_dir=f"gs://md-ml/{JOB_NAME}",
     )
-
-    # gcc_aip.CustomContainerModelBatchPredictOp(
-    #     model= f"/gcs/md-ml/job-{JOB_ID}",
-    #     container_uri=INFER_IMAGE,
-    # ).after(train_task)
-    # gcc_aip.BatchPredictOp(
-    #     model=train_task.outputs['model'],
-    # )
-
-    auto_infer_task = gcc_aip.CustomContainerTrainingJobRunOp(
-        display_name=f"inference-{JOB_ID}",
-        container_uri=INFER_IMAGE,
-        command=[
-            "./process.sh",
-            f"--model=/gcs/md-ml/job-{JOB_ID}",
-            "--style=beebe",
-            "--phrase=\" solid pastel background\"",
-            f"--output=/gcs/md-ml/job-{JOB_ID}/images",
-            "--steps=100",
-            "--number=20",
-        ],
-        staging_bucket="gs://md-ml",
-        model_serving_container_image_uri=TRAIN_IMAGE,
-        machine_type="n1-highmem-8",
-        accelerator_type="NVIDIA_TESLA_K80",
-        accelerator_count=1,
-    ).after(train_task)
-
-    auto_infer_task2 = gcc_aip.CustomContainerTrainingJobRunOp(
-        display_name=f"inference-{JOB_ID}",
-        container_uri=INFER_IMAGE,
-        command=[
-            "./process.sh",
-            f"--model=/gcs/md-ml/job-{JOB_ID}",
-            "--style=beebe",
-            "--phrase=\" another phrase\"",
-            f"--output=/gcs/md-ml/job-{JOB_ID}/images",
-            "--steps=100",
-            "--number=20",
-        ],
-        staging_bucket="gs://md-ml",
-        model_serving_container_image_uri=TRAIN_IMAGE,
-        machine_type="n1-highmem-8",
-        accelerator_type="NVIDIA_TESLA_K80",
-        accelerator_count=1,
-    ).after(train_task)
 
 # TODO: save this somewhere
 # and put this file in a pubsub topic to run piplines dynamically
-compiler.Compiler().compile(calc_pipeline, '/os-shared/workflow.json')
+compiler.Compiler().compile(add_pipeline, '/os-shared/workflow.json')
 
 job = aiplatform.PipelineJob(display_name = 'stable-pipe',
                              template_path = '/os-shared/workflow.json',
-                             job_id = f"job-{JOB_ID}",
+                             job_id = JOB_NAME,
                             #  pipeline_root = PIPELINE_ROOT_PATH,
                             #  parameter_values = PIPELINE_PARAMETERS,
                             #  enable_caching = ENABLE_CACHING,
-                            #  encryption_spec_key_name = CMEK,
                             #  labels = LABELS,
                             #  credentials = GOOGLE_APPLICATION_CREDENTIALS,
                              project = os.getenv('PROJECT_ID'),
                             #  location = LOCATION,
                             #  failure_policy = FAILURE_POLICY,
-                             )
+                        )
 
 # job.submit(service_account=SERVICE_ACCOUNT,
 #            network=NETWORK)

@@ -1,3 +1,6 @@
 [submodule "ml-base"]
 	path = ml-base
 	url = git@github.com:container-labs/ml-base.git
+[submodule "dcm-on-gke"]
+	path = dcm-on-gke
+	url = https://github.com/suffiank/dcgm-on-gke

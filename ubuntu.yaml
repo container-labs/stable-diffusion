@@ -16,13 +16,12 @@ spec:
     spec:
       containers:
       - name: stable-server
-        image: us-central1-docker.pkg.dev/md-wbeebe-0808-example-apps/mass-learn/server:latest
+        image: us-central1-docker.pkg.dev/md-demos/stable-app/model-server:1
         ports:
         - containerPort: 5000
         # resources:
         #   limits:
         #     nvidia.com/gpu: 1
       nodeSelector:
-        cloud.google.com/gke-accelerator: nvidia-tesla-k80
+        cloud.google.com/gke-accelerator: nvidia-tesla-a100
 
-# cloud.google.com/gke-accelerator=nvidia-tesla-k80

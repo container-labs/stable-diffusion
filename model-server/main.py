@@ -5,8 +5,9 @@ import uuid
 
 from diffusers import StableDiffusionPipeline
 from flask import Flask, jsonify, request, send_file
-from flask_cors import CORS, cross_origin
-from torch import Generator
+
+# from flask_cors import CORS, cross_origin
+# from torch import Generator
 
 model_trigger_map = {
     "DGSpitzer/Cyberpunk-Anime-Diffusion": "cyberpunk style",
@@ -35,23 +36,28 @@ sem = threading.Semaphore()
 
 @app.route("/health")
 def health_check():
-    return jsonify({ "healthy":true })
+    return jsonify({ "healthy":True })
 
 @app.route("/", methods=['OPTIONS'])
 def preflight_options():
-    return jsonify({ "healthy":true })
+    return jsonify({ "healthy":True })
 
 @app.route("/", methods=['POST', 'PUT'])
 def hello_world():
+    # faces = Restoration()
+    # face_restore_models = faces.load_face_restore_models('./gfpgan')
+    # gfpgan_instance = face_restore_models[0]
+    # codeformer_instance = face_restore_models[1]
+
     body = request.json
     phrase = body.get("phrase", "a unicorn playing a rainbow guitar")
-    model  = body.get("model", "runwayml/stable-diffusion-v1-5")
+    model  = body.get("model", "stabilityai/stable-diffusion-2-1")
     steps = int(body.get("steps", 50))
-    if steps > 500:
-        return jsonify({"error": "Steps must be less than 500"})
+    if steps > 800:
+        return jsonify({"error": "Steps must be less than 800"})
     guidance_scale  = float(body.get("guidance_scale", 8.5))
-    height = int(body.get("height", 512))
-    width = int(body.get("width", 512))
+    height = int(body.get("height", 768))
+    width = int(body.get("width", 768))
     # what's the effective range of SD seeds
     random_seed = random.randint(0, 5000)
     seed = int(body.get("seed", random_seed))
@@ -59,40 +65,59 @@ def hello_world():
     phrase = f"{style_trigger} {phrase}"
     sem.acquire()
     print(f"phrase: {phrase}\nmodel: {model}\nsteps: {steps}\nguidance_scale: {guidance_scale}\nseed: {seed}")
-    generator = Generator().manual_seed(seed)
+    # generator = Generator().manual_seed(seed)
     pipe = StableDiffusionPipeline.from_pretrained(
       model,
       use_auth_token=os.getenv('HUGGINGFACE_TOKEN'),
-      generator=generator
     ).to("cuda")
     result = pipe(phrase,
         num_inference_steps=steps,
         guidance_scale=guidance_scale,
         height=height,
         width=width,
+        # omg this forces it to CPU
+        # without a newer version of pytorch
+        # generator=generator,
     )
     sem.release()
     image = result.images[0]
     unique_id = str(uuid.uuid4())
-    img_path = f"/mnt/md-ml-public/test-out/{hash(model)}-{unique_id}-{seed}.png"
-    url_path = f"https://storage.googleapis.com/md-ml-public/test-{unique_id}.png"
-    image.save(img_path)
+    file_name = f"{hash(model)}-{unique_id}-{seed}.png"
+
+    file_path = f"/mnt/md-ml-public/{file_name}"
+    url_path = f"https://storage.googleapis.com/md-ml-public/{file_name}"
+    image.save(file_path)
+
+    # if self.facetool_strength > 0.0:
+    #     image_file = Image.open(image_path)
+    #     # if self.facetool == "gfpgan":
+    #     #   image = gfpgan_instance.process(image_file, self.facetool_strength, seed)
+    #     #   image.save(image_path)
+    #     if self.facetool == "codeformer":
+    #       image = codeformer_instance.process(
+    #           image=image_file,
+    #           strength=self.facetool_strength,
+    #           # device="mps",
+    #           device="cpu",
+    #           seed=seed,
+    #           fidelity=self.codeformer_fidelity)
+    #       image.save(image_path)
     data = {
         "img": url_path
     }
     return jsonify(data)
 
-@app.route("/predict", methods=['POST'])
-def predict():
-    body = request.json
-    instances = body.get("instances", [])
-    for instance in instances:
-        print(instance)
+# @app.route("/predict", methods=['POST'])
+# def predict():
+#     body = request.json
+#     instances = body.get("instances", [])
+#     for instance in instances:
+#         print(instance)
 
-    predictions = []
-    return jsonify({
-        "predictions": predictions
-    })
+#     predictions = []
+#     return jsonify({
+#         "predictions": predictions
+#     })
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))

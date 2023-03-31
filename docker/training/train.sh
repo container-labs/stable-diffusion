@@ -97,6 +97,8 @@ python textual_inversion.py \
   --learning_rate=${LEARNING_RATE} \
   --scale_lr \
   --mixed_precision=${MIXED_PRECISION} \
-  --output_dir=${OUTPUT_DIR}
+  --output_dir=${OUTPUT_DIR} \
+  --center_crop \
+  --num_train_epochs=100
 
 

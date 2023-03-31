@@ -79,7 +79,35 @@ services:
       - --token=poster
       - --learning=0.01
       - --kind=style
-
+    environment:
+      - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
+    volumes:
+      - conda_cache:/root/.conda:delegated
+      - pip_cache:/root/.cache/pip:delegated
+      - ./model-cache:/root/.cache/huggingface:default
+      - ./image_dir:/image_dir:default
+  training-update:
+    # force amd so it's the same as remote
+    platform: linux/amd64
+    build:
+      context: ./docker/training-update
+      dockerfile: Dockerfile
+      args:
+        - BASE_IMAGE=stable-diffusion_training-base
+      # entrypoint:
+      #   - ./train-style.sh
+    entrypoint: ./train.sh
+    command:
+      - --model=stabilityai/stable-diffusion-2-1
+      - --data=/gcs/md-ml/training-data-styles/jpl-512
+      - --output=/image_dir
+      - --steps=50
+      - --phrase=dopeaf
+      - --repeat=100
+      - --batch=10
+      - --token=poster
+      - --learning=0.01
+      - --kind=style
     environment:
       - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
     volumes:
@@ -91,7 +119,6 @@ services:
   train:
     build:
       context: ./py-jobs
-    command: python train2.py
     environment:
       - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
       - GOOGLE_APPLICATION_CREDENTIALS=creds.json
@@ -165,6 +192,15 @@ services:
       - ./creds.json:/creds.json
       - ./kflow/components:/os-shared:default
 
+  open-ai:
+    build:
+      context: ./open-ai
+      dockerfile: Dockerfile
+    ports:
+      - 6000:5000
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
   gcloud:
     image: google/cloud-sdk:latest
     volumes:
@@ -172,11 +208,10 @@ services:
       - ./gcloud-vol:/root/gcloud-vol
     command: >
       bash -c "
-      mkdir -p /root/gcloud-vol/jpl &&
+      mkdir -p /root/gcloud-vol/jpl4 &&
       gcloud auth activate-service-account --key-file=/creds.json &&
       gcloud config set project md-wbeebe-0808-example-apps &&
-      gsutil ls gs://md-ml &&
       gsutil -m cp -r \
-        "gs://md-ml/training-data-styles/jpl" \
-        /root/gcloud-vol/jpl
+        "gs://md-ml/training-job-1672624636/model" \
+        ./root/gcloud-vol/jpl4
       "
