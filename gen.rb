@@ -41,7 +41,7 @@ end
 
 # Enqueue the requests into the queue
 100.times do |i|
-  url = 'http://localhost:6000'
+  url = 'http://localhost:6000' # https://stable.gcp-gcp-gcp.com/
   json_body = {
     phrase: "highly detailed digital painting of beebz in space in the style of dopeaf",
     steps: 300,

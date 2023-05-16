@@ -128,18 +128,6 @@ services:
       - GCP_TOPIC=training-requests
       - GCP_SUBSCRIPTION=trainer-sub
 
-  orchestration:
-    build:
-      context: ./py-jobs
-    command: python runner.py
-    environment:
-      - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}
-      - GOOGLE_APPLICATION_CREDENTIALS=creds.json
-      - GOOGLE_CLOUD_PROJECT=md-wbeebe-0808-example-apps
-      - REGION=us-central1
-      - GCS_BUCKET=gs://md-ml
-      - GCP_TOPIC=training-requests
-      - GCP_SUBSCRIPTION=trainer-sub
   # flow:
   #   build:
   #     context: ./flow

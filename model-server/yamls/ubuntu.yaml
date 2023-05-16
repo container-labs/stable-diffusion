@@ -30,12 +30,12 @@ spec:
             name: pvc-demo-vol
         env:
         - name: HUGGINGFACE_TOKEN
-          value: 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
+          value: hf_
         resources:
           limits:
             nvidia.com/gpu: 1
           requests:
             memory: 22Gi
       nodeSelector:
-        cloud.google.com/gke-accelerator: nvidia-tesla-p100
+        cloud.google.com/gke-accelerator: nvidia-tesla-a100
 
