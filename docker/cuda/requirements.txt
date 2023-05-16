@@ -12,7 +12,7 @@ numpy
 # --pre torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/nightly/cpu
 omegaconf==2.1.1
 opencv-python==4.6.0.66
-pillow==9.2.0
+pillow==9.3.0
 pudb==2019.2
 torch
 torchvision
