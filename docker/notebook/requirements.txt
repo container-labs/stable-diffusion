@@ -22,5 +22,5 @@ streamlit==1.12.0
 test-tube>=0.7.5
 torch-fidelity==0.3.0
 torchmetrics
-transformers==4.21.3
+transformers==4.30.0
 -e .
